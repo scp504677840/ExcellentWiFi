@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/map_common"
+        android:showAsAction="never"
+        android:title="@string/menu_map_common"/>
+    <item
+        android:id="@+id/map_site"
+        android:showAsAction="never"
+        android:title="@string/menu_map_site"/>
+    <item
+        android:id="@+id/map_traffic"
+        android:showAsAction="never"
+        android:title="@string/menu_map_traffic"/>
+    <item
+        android:id="@+id/map_location"
+        android:showAsAction="never"
+        android:title="@string/menu_map_location"/>
+    <item
+        android:id="@+id/map_sensormode_normal"
+        android:showAsAction="never"
+        android:title="@string/menu_map_sensormode_normal"/>
+    <item
+        android:id="@+id/map_sensormode_following"
+        android:showAsAction="never"
+        android:title="@string/menu_map_sensormode_following"/>
+    <item
+        android:id="@+id/map_sensormode_compass"
+        android:showAsAction="never"
+        android:title="@string/menu_map_sensormode_compass"/>
+    <item
+        android:id="@+id/map_add_overlay"
+        android:showAsAction="never"
+        android:title="@string/menu_map_add_overlay"/>
+
+</menu>

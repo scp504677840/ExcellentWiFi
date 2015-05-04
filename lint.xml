@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="HandlerLeak">
+        <ignore path="src/com/jzlg/excellentwifi/fragment/MainWifiFragemnt.java" />
+    </issue>
+    <issue id="InflateParams" severity="ignore" />
+    <issue id="InlinedApi" severity="ignore" />
+    <issue id="NewApi" severity="ignore" />
+    <issue id="ShowToast" severity="ignore" />
+    <issue id="UseValueOf" severity="ignore" />
+</lint>

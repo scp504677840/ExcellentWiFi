@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="200dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/wifi_tv_show"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/pop_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="szcpkfb"
+        android:textSize="15sp" />
+
+    <EditText
+        android:id="@+id/pop_password"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/popinputps"
+        android:inputType="textPassword" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/pop_bt_ok"
+            android:layout_width="74dp"
+            android:layout_height="30dp"
+            android:background="@drawable/wifi_button_state"
+            android:paddingRight="10dp"
+            android:text="@string/popconnection"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/pop_bt_cancel"
+            android:layout_width="74dp"
+            android:layout_height="30dp"
+            android:background="@drawable/wifi_button_state"
+            android:paddingLeft="10dp"
+            android:text="@string/popcancel"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+
+</LinearLayout>
