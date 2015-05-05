@@ -100,6 +100,7 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 	// 点击事件
 	@Override
 	public void onClick(View v) {
+		Intent intent = null;
 		resetImg();
 		switch (v.getId()) {
 		case R.id.main_bottom_wifi:
@@ -115,11 +116,10 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 			setSelect(3);
 			break;
 		case R.id.left_menu_levels:
-			Intent intent = new Intent(this, ChartActivity.class);
-			startActivity(intent);
+			intent = new Intent(this, ChartActivity.class);
 			break;
 		case R.id.left_menu_wifilocation:
-			Toast.makeText(this, "2", 0).show();
+			intent = new Intent(this, WifiLocation.class);
 			break;
 		case R.id.left_menu_pwdStrength:
 			Toast.makeText(this, "3", 0).show();
@@ -134,6 +134,9 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 		default:
 			break;
 		}
+		if(intent != null){
+			startActivity(intent);
+		}
 	}
 
 	// 设置被选中的TAB
@@ -146,7 +149,7 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 		switch (i) {
 		case 0:
 			if (mFMWifi == null) {
-				mFMWifi = new WifiFragment(getApplicationContext());
+				mFMWifi = new WifiFragment(this);
 				transaction.add(R.id.main_fragemntlayout, mFMWifi);
 			} else {
 				transaction.show(mFMWifi);

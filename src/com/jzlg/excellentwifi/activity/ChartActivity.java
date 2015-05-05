@@ -35,7 +35,7 @@ public class ChartActivity extends Activity implements
 	private float[][] randomNumbersTab = new float[maxNumberOfLines][numberOfPoints];
 
 	private ValueShape shape = ValueShape.CIRCLE;// CIRCLE:圆形;DIAMOND:菱形;SQUARE:正方形
-	private boolean isCubic = false;// 是否是曲线
+	private boolean isCubic = true;// 是否是曲线
 	private boolean isFilled = false;// 是否填充
 	private boolean hasLabels = true;// 是否显示数值
 	private boolean hasLabelsOnlyForSelected = false;// 仅仅对选中的点进行显示数值

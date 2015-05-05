@@ -9,6 +9,7 @@ import com.jzlg.excellentwifi.R;
 import com.jzlg.excellentwifi.utils.WifiAdmin;
 
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.net.wifi.ScanResult;
@@ -44,6 +45,7 @@ public class WifiFragment extends Fragment implements OnClickListener,
 	private ScanResult mScanResult;
 	private boolean isRefresh = false;// 是否刷新
 	private Context mContext;
+	private LinearLayout loginLayout;
 
 	public WifiFragment(Context context) {
 		mContext = context;
@@ -98,15 +100,15 @@ public class WifiFragment extends Fragment implements OnClickListener,
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("ssid", mScanResult.SSID);
 				int level = mScanResult.level;
-				if (Math.abs(level) < 30) {
+				if (Math.abs(level) <= 45) {
 					map.put("levelimg", R.drawable.wifi01);
-				} else if (Math.abs(level) < 40) {
+				} else if (Math.abs(level) <= 65) {
 					map.put("levelimg", R.drawable.wifi02);
-				} else if (Math.abs(level) < 50) {
+				} else if (Math.abs(level) <= 80) {
 					map.put("levelimg", R.drawable.wifi03);
-				} else if (Math.abs(level) < 70) {
+				} else if (Math.abs(level) <= 100) {
 					map.put("levelimg", R.drawable.wifi04);
-				} else if (Math.abs(level) < 90) {
+				} else{
 					map.put("levelimg", R.drawable.wifi05);
 				}
 				listdata.add(map);
@@ -136,40 +138,29 @@ public class WifiFragment extends Fragment implements OnClickListener,
 		int loac = position - list.size();
 
 		if (loac < 0) {
-			ScanResult sr = list.get(position);
-			Log.i("SSID", sr.SSID + "");
+			final ScanResult sr = list.get(position);
+			Log.i(sr.capabilities, sr.SSID + "");
 
 			boolean c = mWifiAdmin.getHistoryWifiConfig(sr.SSID);
 			if (c) {
 				// 如果没有输入密码 且配置列表中没有该WIFI
 				/* WIFICIPHER_WPA 加密 */
-				if (sr.capabilities.contains("WPA-PSK")) {
-					// int netid = mWifiManager.addNetwork(createWifiInfo(
-					// sr.SSID, "87654321", 3));
+				if (sr.capabilities.contains("WPA2-PSK")) {
+					Log.i("SSID", "WPA2-PSK");
+					mWifiAdmin.showLoadingPop(sr.SSID);
+				}else if(sr.capabilities.contains("WPA-PSK")){
 					Log.i("SSID", "WPA-PSK");
-					mWifiAdmin.addNetwork(mWifiAdmin.createWifiInfo(sr.SSID,
-							"", 3));
-					// mWifiManager.enableNetwork(netid, true);
 					mWifiAdmin.showLoadingPop(sr.SSID);
 				} else if (sr.capabilities.contains("WEP")) {
 					/* WIFICIPHER_WEP 加密 */
 					Log.i("SSID", "WEP");
 					mWifiAdmin.addNetwork(mWifiAdmin.createWifiInfo(sr.SSID,
 							"", 2));
-					// int netid =
-					// mWifi.addNetwork(mWifiAdmin.createWifiInfo(sr.SSID,
-					// "87654321", 2));
-					// mWifiManager.enableNetwork(netid, true);
-					// mWifiAdmin.showLoadingPop(sr.SSID);
 				} else {
 					/* WIFICIPHER_OPEN NOPASSWORD 开放无加密 */
 					Log.i("SSID", "WU");
-					// int netid =
-					// mWifiManager.addNetwork(createWifiInfo(sr.SSID,
-					// "", 1));
 					mWifiAdmin.addNetwork(mWifiAdmin.createWifiInfo(sr.SSID,
 							"", 1));
-					// mWifiManager.enableNetwork(netid, true);
 				}
 			}
 		}

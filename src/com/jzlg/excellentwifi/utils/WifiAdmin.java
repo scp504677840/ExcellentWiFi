@@ -45,7 +45,7 @@ public class WifiAdmin {
 	WifiLock mWifiLock;
 	private Context mContext;
 	private WifiConfiguration mWifiConfig;
-	private View mShowCView;
+	private LinearLayout mShowCView;
 	private PopupWindow mShowCPopu = null;
 
 	public WifiAdmin(Context context) {
@@ -56,6 +56,7 @@ public class WifiAdmin {
 		mWifiInfo = mWifiManager.getConnectionInfo();
 		mContext = context;
 	}
+
 	/**
 	 * 打开wifi
 	 */
@@ -141,7 +142,7 @@ public class WifiAdmin {
 		// 得到配置好的网络连接
 		mWifiConfigurations = mWifiManager.getConfiguredNetworks();
 	}
-	
+
 	/**
 	 * 查找已经设置好的Wifi
 	 * 
@@ -151,6 +152,7 @@ public class WifiAdmin {
 	public boolean getHistoryWifiConfig(String ssid) {
 		mWifiConfigurations = mWifiManager.getConfiguredNetworks();
 		for (int i = 0; i < mWifiConfigurations.size(); i++) {
+			mWifiManager.removeNetwork(mWifiConfigurations.get(i).networkId);
 			if (("\"" + ssid + "\"").equals(mWifiConfigurations.get(i).SSID)) {
 				connetionConfiguration(i);
 				return false;
@@ -167,7 +169,7 @@ public class WifiAdmin {
 	public List<ScanResult> getWifiList() {
 		return mWifiList;
 	}
-	
+
 	/**
 	 * 获取MacAddress
 	 * 
@@ -262,126 +264,39 @@ public class WifiAdmin {
 	public void addNetwork(WifiConfiguration wcg) {
 		int wcgID = mWifiManager.addNetwork(wcg);
 		mWifiConfigurations = getConfiguration();
-		mWifiManager.enableNetwork(wcgID, true);
+		if (!mWifiManager.enableNetwork(wcgID, true)) {
+			Toast.makeText(mContext, "密码错误", 0).show();
+		}
 	}
 
 	/**
-	 * 断开指定ID网络连接
+	 * 断开当前网络连接
 	 * 
 	 * @param netId
 	 *            网络ID
 	 */
-	public void disConnectionWifi(int netId) {
-		mWifiManager.disableNetwork(netId);
-		mWifiManager.disconnect();
-	}
-
-	/**
-	 * 连接wifi
-	 * 
-	 * @param position
-	 */
-	public void linkWifi(int position) {
-		if (mWifiList != null) {
-			String ssid = mWifiList.get(position).SSID;// 获取SSID
-			boolean flag = getHistoryWifiConfig(ssid);// 检查Wifi配置是否已存在
-			String capabilities = mWifiList.get(position).capabilities;// 获取加密方式
-			if (flag) {
-				mWifiConfig = new WifiConfiguration();
-				mWifiConfig.SSID = "\"" + ssid + "\"";
-				mWifiConfig.allowedPairwiseCiphers
-						.set(WifiConfiguration.PairwiseCipher.CCMP);
-				mWifiConfig.allowedGroupCiphers
-						.set(WifiConfiguration.GroupCipher.CCMP);
-				mWifiConfig.allowedGroupCiphers
-						.set(WifiConfiguration.GroupCipher.TKIP);
-				mWifiConfig.allowedPairwiseCiphers
-						.set(WifiConfiguration.PairwiseCipher.TKIP);
-				if ("[ESS]".equals(capabilities)) {
-					mWifiConfig.allowedKeyManagement
-							.set(WifiConfiguration.KeyMgmt.NONE);
-					mWifiConfig.allowedProtocols
-							.set(WifiConfiguration.Protocol.WPA);
-					mWifiConfig.wepTxKeyIndex = 0;
-					addWifi(mWifiConfig);// 连接指定Wiif
-				} else if ("[WPA2-PSK-CCMP][ESS]".equals(capabilities)) {
-					final LinearLayout llt = (LinearLayout) LayoutInflater
-							.from(mContext).inflate(R.layout.wifi_login, null);
-					new AlertDialog.Builder(mContext)
-							.setIcon(R.drawable.ic_launcher)//
-							.setTitle("输入密码")//
-							.setView(llt)//
-							.setPositiveButton("连接",
-									new DialogInterface.OnClickListener() {
-										@Override
-										public void onClick(
-												DialogInterface dialog,
-												int which) {
-											// 配置要连接的网络
-											EditText et = (EditText) llt
-													.findViewById(R.id.wifi_add_pwd);
-											String pwd = et.getText()
-													.toString();
-											mWifiConfig.preSharedKey = "\""
-													+ pwd + "\"";
-											mWifiConfig.hiddenSSID = true;
-											mWifiConfig.status = WifiConfiguration.Status.ENABLED;
-											mWifiConfig.allowedKeyManagement
-													.set(WifiConfiguration.KeyMgmt.WPA_PSK);
-											mWifiConfig.allowedProtocols
-													.set(WifiConfiguration.Protocol.RSN);
-											addWifi(mWifiConfig);// 连接指定Wifi
-										}
-									}).show();
-				} else if ("[WPA2-PSK-CCMP][WPS][ESS]".equals(capabilities)) {
-					final LinearLayout llt = (LinearLayout) LayoutInflater
-							.from(mContext).inflate(R.layout.wifi_login, null);
-					new AlertDialog.Builder(mContext)
-							.setIcon(R.drawable.ic_launcher)
-							.setTitle("输入密码")
-							.setView(llt)
-							.setPositiveButton("连接",
-									new DialogInterface.OnClickListener() {
-										@Override
-										public void onClick(
-												DialogInterface dialog,
-												int which) {
-											// 配置要连接的网络
-											EditText et = (EditText) llt
-													.findViewById(R.id.wifi_add_pwd);
-											String pwd = et.getText()
-													.toString();
-											mWifiConfig.preSharedKey = "\""
-													+ pwd + "\"";
-											mWifiConfig.hiddenSSID = true;
-											mWifiConfig.status = WifiConfiguration.Status.ENABLED;
-											mWifiConfig.allowedKeyManagement
-													.set(WifiConfiguration.KeyMgmt.WPA_PSK);
-											mWifiConfig.allowedProtocols
-													.set(WifiConfiguration.Protocol.RSN);
-											addWifi(mWifiConfig);// 连接指定Wifi
-										}
-									}).show();
-				} else {
-
-				}
-			}
+	public void disConnectionWifi() {
+		if(getNetworkId()!=-1){
+			mWifiManager.disableNetwork(getNetworkId());
+			mWifiManager.disconnect();
 		}
 	}
+
 
 	public WifiConfiguration createWifiInfo(String SSID, String Password,
 			int Type) {
 		WifiConfiguration config = new WifiConfiguration();
-		config.allowedAuthAlgorithms.clear();
-		config.allowedGroupCiphers.clear();
-		config.allowedKeyManagement.clear();
-		config.allowedPairwiseCiphers.clear();
-		config.allowedProtocols.clear();
 		config.SSID = "\"" + SSID + "\"";
+		config.allowedPairwiseCiphers
+				.set(WifiConfiguration.PairwiseCipher.CCMP);
+		config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+		config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+		config.allowedPairwiseCiphers
+				.set(WifiConfiguration.PairwiseCipher.TKIP);
 		if (Type == 1)// Data.WIFICIPHER_NOPASS)
 		{
-//			config.wepKeys[0] = "";
 			config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+			config.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
 			config.wepTxKeyIndex = 0;
 		}
 		if (Type == 2)// Data.WIFICIPHER_WEP)
@@ -393,8 +308,6 @@ public class WifiAdmin {
 			config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
 			config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
 			config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);
-			config.allowedGroupCiphers
-					.set(WifiConfiguration.GroupCipher.WEP104);
 			config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
 			config.wepTxKeyIndex = 0;
 		}
@@ -402,38 +315,33 @@ public class WifiAdmin {
 		{
 			config.preSharedKey = "\"" + Password + "\"";
 			config.hiddenSSID = true;
-			config.allowedAuthAlgorithms
-					.set(WifiConfiguration.AuthAlgorithm.OPEN);
-			config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
-			config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
-			config.allowedPairwiseCiphers
-					.set(WifiConfiguration.PairwiseCipher.TKIP);
-			config.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
 			config.status = WifiConfiguration.Status.ENABLED;
+			config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+			config.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
 		}
 		return config;
 	}
-	
+
 	public void showLoadingPop(final String ssid) {
 		Button btn_ok, btn_cancel;
 		TextView title;
 		final EditText password;
-		title = (TextView) mShowCView.findViewById(R.id.pop_title);
-		password = (EditText) mShowCView.findViewById(R.id.pop_password);
-		btn_ok = (Button) mShowCView.findViewById(R.id.pop_bt_ok);
-		btn_cancel = (Button) mShowCView.findViewById(R.id.pop_bt_cancel);
 		if (mShowCView == null) {
-			mShowCView = LayoutInflater.from(mContext).inflate(
-					R.layout.wifi_pop, null);
+			mShowCView = (LinearLayout) LayoutInflater.from(mContext).inflate(
+					R.layout.layout_wifi_pop, null);
 			mShowCView.setBackgroundResource(R.drawable.wifi_tv_show);
 		}
 		if (mShowCPopu == null) {
 			mShowCPopu = new PopupWindow(mShowCView, LayoutParams.WRAP_CONTENT,
 					LayoutParams.WRAP_CONTENT);
 		}
+		title = (TextView) mShowCView.findViewById(R.id.pop_title);
+		password = (EditText) mShowCView.findViewById(R.id.pop_password);
+		btn_ok = (Button) mShowCView.findViewById(R.id.pop_bt_ok);
+		btn_cancel = (Button) mShowCView.findViewById(R.id.pop_bt_cancel);
 		mShowCPopu.setFocusable(true);
 		mShowCPopu.setOutsideTouchable(true);
-		mShowCPopu.setBackgroundDrawable(new BitmapDrawable());
+		// mShowCPopu.setBackgroundDrawable(new BitmapDrawable());
 		title.setText("" + ssid);
 		// 连接按钮
 		btn_ok.setOnClickListener(new OnClickListener() {
@@ -442,7 +350,6 @@ public class WifiAdmin {
 				String passwords = password.getText().toString().trim();
 				if (passwords != null && !passwords.equals("")) {
 					addNetwork(createWifiInfo(ssid, passwords, 3));
-					// mWifiManager.enableNetwork(netid, true);
 					mShowCPopu.dismiss();
 				}
 
