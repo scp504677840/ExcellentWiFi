@@ -5,11 +5,10 @@
     android:gravity="center"
     android:orientation="vertical" >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="雷达TAB"
-        android:textSize="40sp"
-        android:textStyle="bold" />
+    <com.jzlg.excellentwifi.activity.RadarView
+        android:id="@+id/radar_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+    </com.jzlg.excellentwifi.activity.RadarView>
 
 </LinearLayout>

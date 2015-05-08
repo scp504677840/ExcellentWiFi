@@ -1,7 +1,8 @@
 package com.jzlg.excellentwifi.activity;
 
 import com.jzlg.excellentwifi.R;
-import com.jzlg.excellentwifi.fragment.LeidaFragment;
+import com.jzlg.excellentwifi.activity.RefreshListView.IRefreshListener;
+import com.jzlg.excellentwifi.fragment.RadarFragment;
 import com.jzlg.excellentwifi.fragment.MapFragment;
 import com.jzlg.excellentwifi.fragment.MoreFragment;
 import com.jzlg.excellentwifi.fragment.WifiFragment;
@@ -24,22 +25,25 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 	// 侧滑菜单
 	private SlidingMenu mLeftMenu;
 
+	// 切换菜单
+	private ImageButton mBtnToggleMenu;
+
 	// 四个布局相关
 	private LinearLayout mTabWifi;
 	private LinearLayout mTabMap;
-	private LinearLayout mTabLeida;
+	private LinearLayout mTabRadar;
 	private LinearLayout mTabMore;
 
 	// 四个图片按钮
 	private ImageButton mImgWifi;
 	private ImageButton mImgMap;
-	private ImageButton mImgLeida;
+	private ImageButton mImgRadar;
 	private ImageButton mImgMore;
 
 	// 四个Fragment
 	private Fragment mFMWifi;
 	private Fragment mFMMap;
-	private Fragment mFMLeida;
+	private Fragment mFMRadar;
 	private Fragment mFMMore;
 
 	// 五个侧滑菜单选项
@@ -63,26 +67,31 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 	private void initEvent() {
 		mTabWifi.setOnClickListener(this);
 		mTabMap.setOnClickListener(this);
-		mTabLeida.setOnClickListener(this);
+		mTabRadar.setOnClickListener(this);
 		mTabMore.setOnClickListener(this);
 		mLayoutLevels.setOnClickListener(this);
 		mLayoutWifilocation.setOnClickListener(this);
 		mLayoutPwd.setOnClickListener(this);
 		mLayoutGplot.setOnClickListener(this);
 		mLayoutSetting.setOnClickListener(this);
+		mBtnToggleMenu.setOnClickListener(this);
 	}
 
 	// 初始化操作
 	private void initView() {
+		// 左侧菜单
+		mLeftMenu = (SlidingMenu) findViewById(R.id.main_leftmenu);
+		// 切换菜单
+		mBtnToggleMenu = (ImageButton) findViewById(R.id.mian_top_imgbtn);
 		// 布局
 		mTabWifi = (LinearLayout) findViewById(R.id.main_bottom_wifi);
 		mTabMap = (LinearLayout) findViewById(R.id.main_bottom_map);
-		mTabLeida = (LinearLayout) findViewById(R.id.main_bottom_leida);
+		mTabRadar = (LinearLayout) findViewById(R.id.main_bottom_radar);
 		mTabMore = (LinearLayout) findViewById(R.id.main_bottom_more);
 		// 图片按钮
 		mImgWifi = (ImageButton) findViewById(R.id.main_bottom_wifi_imgbtn);
 		mImgMap = (ImageButton) findViewById(R.id.main_bottom_map_imgbtn);
-		mImgLeida = (ImageButton) findViewById(R.id.main_bottom_leida_imgbtn);
+		mImgRadar = (ImageButton) findViewById(R.id.main_bottom_radar_imgbtn);
 		mImgMore = (ImageButton) findViewById(R.id.main_bottom_more_imgbtn);
 		// 左边菜单选项
 		mLayoutLevels = (RelativeLayout) findViewById(R.id.left_menu_levels);
@@ -93,9 +102,9 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 	}
 
 	// 切换菜单
-	public void toggleMenu(View view) {
-		mLeftMenu.toggle();
-	}
+	// public void toggleMenu(View view) {
+	// mLeftMenu.toggle();
+	// }
 
 	// 点击事件
 	@Override
@@ -109,7 +118,7 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 		case R.id.main_bottom_map:
 			setSelect(1);
 			break;
-		case R.id.main_bottom_leida:
+		case R.id.main_bottom_radar:
 			setSelect(2);
 			break;
 		case R.id.main_bottom_more:
@@ -122,19 +131,22 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 			intent = new Intent(this, WifiLocation.class);
 			break;
 		case R.id.left_menu_pwdStrength:
-			Toast.makeText(this, "3", 0).show();
+			intent = new Intent(this, PwdStrengthActivity.class);
 			break;
 		case R.id.left_menu_gplot:
-			Toast.makeText(this, "4", 0).show();
+			intent = new Intent(this, GplotActivity.class);
 			break;
 		case R.id.left_menu_setting:
-			Toast.makeText(this, "5", 0).show();
+			intent = new Intent(this, SettingActivity.class);
+			break;
+		case R.id.mian_top_imgbtn:
+			mLeftMenu.toggle();
 			break;
 
 		default:
 			break;
 		}
-		if(intent != null){
+		if (intent != null) {
 			startActivity(intent);
 		}
 	}
@@ -166,13 +178,13 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 			mImgMap.setImageResource(R.drawable.main_bottom_map_on);
 			break;
 		case 2:
-			if (mFMLeida == null) {
-				mFMLeida = new LeidaFragment();
-				transaction.add(R.id.main_fragemntlayout, mFMLeida);
+			if (mFMRadar == null) {
+				mFMRadar = new RadarFragment();
+				transaction.add(R.id.main_fragemntlayout, mFMRadar);
 			} else {
-				transaction.show(mFMLeida);
+				transaction.show(mFMRadar);
 			}
-			mImgLeida.setImageResource(R.drawable.main_bottom_leida_on);
+			mImgRadar.setImageResource(R.drawable.main_bottom_leida_on);
 			break;
 		case 3:
 			if (mFMMore == null) {
@@ -199,8 +211,8 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 		if (mFMMap != null) {
 			transaction.hide(mFMMap);
 		}
-		if (mFMLeida != null) {
-			transaction.hide(mFMLeida);
+		if (mFMRadar != null) {
+			transaction.hide(mFMRadar);
 		}
 		if (mFMMore != null) {
 			transaction.hide(mFMMore);
@@ -211,8 +223,7 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 	private void resetImg() {
 		mImgWifi.setImageResource(R.drawable.main_bottom_wifi_off);
 		mImgMap.setImageResource(R.drawable.main_bottom_map_off);
-		mImgLeida.setImageResource(R.drawable.main_bottom_leida_off);
+		mImgRadar.setImageResource(R.drawable.main_bottom_leida_off);
 		mImgMore.setImageResource(R.drawable.main_bottom_more_off);
 	}
-
 }

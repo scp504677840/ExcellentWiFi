@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.jzlg.excellentwifi.R;
+import com.jzlg.excellentwifi.activity.RefreshListView;
+import com.jzlg.excellentwifi.activity.RefreshListView.IRefreshListener;
 import com.jzlg.excellentwifi.utils.WifiAdmin;
 
 import android.app.AlertDialog;
@@ -15,6 +17,7 @@ import android.content.DialogInterface;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,12 +36,12 @@ import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
 public class WifiFragment extends Fragment implements OnClickListener,
-		OnItemClickListener, OnScrollListener {
+		OnItemClickListener, OnScrollListener, IRefreshListener {
 	private WifiConfiguration mConfig;
 	private View view;
 	private ImageButton onoffWifi;
 	private WifiAdmin mWifiAdmin;
-	private ListView listview;
+	private RefreshListView listview;
 	private List<Map<String, Object>> listdata;
 	private SimpleAdapter mSimpleAdapter;
 	private List<ScanResult> list;
@@ -72,7 +75,9 @@ public class WifiFragment extends Fragment implements OnClickListener,
 		onoffWifi = (ImageButton) view.findViewById(R.id.main_tab_wifi_onoff);
 		// 初始化WifiAdmin
 		mWifiAdmin = new WifiAdmin(mContext);
-		listview = (ListView) view.findViewById(R.id.main_tab_wifi_listview);
+		listview = (RefreshListView) view
+				.findViewById(R.id.main_tab_wifi_listview);
+		listview.setInterface(this);
 	}
 
 	// 扫描网络
@@ -108,7 +113,7 @@ public class WifiFragment extends Fragment implements OnClickListener,
 					map.put("levelimg", R.drawable.wifi03);
 				} else if (Math.abs(level) <= 100) {
 					map.put("levelimg", R.drawable.wifi04);
-				} else{
+				} else {
 					map.put("levelimg", R.drawable.wifi05);
 				}
 				listdata.add(map);
@@ -148,7 +153,7 @@ public class WifiFragment extends Fragment implements OnClickListener,
 				if (sr.capabilities.contains("WPA2-PSK")) {
 					Log.i("SSID", "WPA2-PSK");
 					mWifiAdmin.showLoadingPop(sr.SSID);
-				}else if(sr.capabilities.contains("WPA-PSK")){
+				} else if (sr.capabilities.contains("WPA-PSK")) {
 					Log.i("SSID", "WPA-PSK");
 					mWifiAdmin.showLoadingPop(sr.SSID);
 				} else if (sr.capabilities.contains("WEP")) {
@@ -193,6 +198,24 @@ public class WifiFragment extends Fragment implements OnClickListener,
 		default:
 			break;
 		}
+	}
+
+	/**
+	 * 刷新数据
+	 */
+	public void onRefresh() {
+		Handler handler = new Handler();
+		handler.postDelayed(new Runnable() {
+
+			@Override
+			public void run() {
+				// 获取最新的数据
+				saomiao();
+				// 通知listview刷新数据完毕
+				listview.refreshComplete();
+			}
+		}, 3000);
+
 	}
 
 }

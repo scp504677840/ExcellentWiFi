@@ -32,7 +32,7 @@
     <application
         android:name="org.litepal.LitePalApplication"
         android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@drawable/wifi_icon_72x72"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <meta-data
@@ -78,6 +78,21 @@
         <!-- 注册WifiLocation -->
         <activity
             android:name="com.jzlg.excellentwifi.activity.WifiLocation"
+            android:screenOrientation="portrait" >
+        </activity>
+        <!-- 注册PwdStrengthActivity -->
+        <activity
+            android:name="com.jzlg.excellentwifi.activity.PwdStrengthActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <!-- 注册GplotActivity -->
+        <activity
+            android:name="com.jzlg.excellentwifi.activity.GplotActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <!-- 注册SettingActivity -->
+        <activity
+            android:name="com.jzlg.excellentwifi.activity.SettingActivity"
             android:screenOrientation="portrait" >
         </activity>
 

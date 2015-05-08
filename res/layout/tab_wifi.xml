@@ -13,10 +13,10 @@
         android:background="@drawable/main_wifi_no_off"
         />
     
-    <ListView 
+    <com.jzlg.excellentwifi.activity.RefreshListView
         android:id="@+id/main_tab_wifi_listview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        ></ListView>
+        ></com.jzlg.excellentwifi.activity.RefreshListView>
 
 </LinearLayout>

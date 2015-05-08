@@ -93,6 +93,6 @@ public class WifiLocation extends Activity {
 		default:
 			break;
 		}
-		return super.onOptionsItemSelected(item);
+		return true;
 	}
 }
