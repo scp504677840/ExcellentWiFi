@@ -29,7 +29,7 @@ import android.widget.Toast;
  * SSID:Service Set ID 服务集识别码 WEP:Wired Equivalent Privacy无线安全
  * 2种强度：40bits和104bits WEP2：128bit WAP/WAP2无线安全 WPS WMM
  * 
- * @author Administrator
+ * @author
  *
  */
 public class WifiAdmin {
@@ -276,12 +276,11 @@ public class WifiAdmin {
 	 *            网络ID
 	 */
 	public void disConnectionWifi() {
-		if(getNetworkId()!=-1){
+		if (getNetworkId() != -1) {
 			mWifiManager.disableNetwork(getNetworkId());
 			mWifiManager.disconnect();
 		}
 	}
-
 
 	public WifiConfiguration createWifiInfo(String SSID, String Password,
 			int Type) {

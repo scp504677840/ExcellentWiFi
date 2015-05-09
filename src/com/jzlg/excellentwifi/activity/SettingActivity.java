@@ -8,6 +8,12 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.Window;
 
+/**
+ * 设置
+ * 
+ * @author 
+ *
+ */
 public class SettingActivity extends Activity {
 	private ActionBar actionBar;
 
@@ -22,6 +28,7 @@ public class SettingActivity extends Activity {
 	private void initView() {
 		actionBar = getActionBar();
 		actionBar.setTitle("设置");
+		actionBar.setLogo(R.drawable.left_menu_setting_white);
 		actionBar.setDisplayHomeAsUpEnabled(true);// 开启导航图标
 	}
 

@@ -6,12 +6,13 @@
     <dbname value="wifiinfo" >
     </dbname>
 
-    <version value="1" >
+    <version value="2" >
     </version>
 
     <list>
         <mapping class="com.jzlg.excellentwifi.entity.WifiInfo"></mapping>
         <mapping class="com.jzlg.excellentwifi.entity.Mobile"></mapping>
+        <mapping class="com.jzlg.excellentwifi.entity.WIFILine"></mapping>
     </list>
 
 </litepal>

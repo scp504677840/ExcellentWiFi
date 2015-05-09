@@ -1,6 +1,5 @@
 package com.jzlg.excellentwifi.activity;
 
-
 import com.jzlg.excellentwifi.R;
 import com.jzlg.excellentwifi.utils.DepthPageTransformer;
 import com.jzlg.excellentwifi.utils.ViewPagerCompat;
@@ -17,13 +16,18 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ImageView.ScaleType;
 
+/**
+ * 引导页
+ * 
+ * @author 
+ *
+ */
 public class GuideActivity extends BaseActivity {
 	private ViewPagerCompat mViewPager;
 	private Button tomain;
-	private int[] mImgIds = new int[] { R.drawable.guide_img1,
-			R.drawable.guide_img2, R.drawable.guide_img3,R.drawable.guide_img4 };
+	private int[] mImgIds = new int[] { R.drawable.guide01, R.drawable.guide02 };
 
-//	private List<ImageView> mImageViews = new ArrayList<ImageView>();
+	// private List<ImageView> mImageViews = new ArrayList<ImageView>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,30 +55,28 @@ public class GuideActivity extends BaseActivity {
 		mViewPager.setAdapter(new PagerAdapter() {
 			@Override
 			public Object instantiateItem(ViewGroup container, int position) {
-				if (position > 2) {
-//					tomain.setVisibility(View.VISIBLE);
+				if (position > 0) {
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 					// 滑至最后一页跳转首页
 					Intent intent = new Intent(GuideActivity.this,
 							MainActivity.class);
 					GuideActivity.this.startActivity(intent);
 					GuideActivity.this.finish();
 				}
-//				}else{
-//					tomain.setVisibility(View.GONE);
-//				}
 				ImageView imageView = new ImageView(GuideActivity.this);
 				imageView.setImageResource(mImgIds[position]);
 				imageView.setScaleType(ScaleType.CENTER_CROP);// 主要是为了让控件不变形
 				container.addView(imageView);
-//				mImageViews.add(imageView);
 				return imageView;
 			}
 
 			@Override
 			public void destroyItem(ViewGroup container, int position,
 					Object object) {
-//				container.removeView(mImageViews.get(position));
-				Toast.makeText(GuideActivity.this, "destroyItem中的position："+position, 0).show();
 				container.removeView((View) object);
 			}
 

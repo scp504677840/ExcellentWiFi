@@ -8,7 +8,7 @@ import android.app.Activity;
 /**
  * 活动管理容器
  * 
- * @author Administrator
+ * @author
  *
  */
 public class ActivityCollector {

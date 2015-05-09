@@ -48,12 +48,6 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.jzlg.excellentwifi.LauncheActivity" />
-            <!-- 设置主活动 -->
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <!-- 注册LookWifiActivity -->
         <activity
@@ -69,6 +63,13 @@
         <activity
             android:name="com.jzlg.excellentwifi.activity.GuideActivity"
             android:screenOrientation="portrait" >
+
+            <!-- 设置主活动 -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <!-- 注册ChartActivity -->
         <activity

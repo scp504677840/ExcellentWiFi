@@ -12,11 +12,11 @@
         android:layout_gravity="center_horizontal"
         android:background="@drawable/main_wifi_no_off"
         />
-    
-    <com.jzlg.excellentwifi.activity.RefreshListView
+    <!-- com.handmark.pulltorefresh.library.PullToRefreshListView -->
+    <ListView
         android:id="@+id/main_tab_wifi_listview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        ></com.jzlg.excellentwifi.activity.RefreshListView>
+        ></ListView>
 
 </LinearLayout>

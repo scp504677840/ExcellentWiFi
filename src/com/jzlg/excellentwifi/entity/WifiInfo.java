@@ -4,6 +4,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * WIFI经纬度覆盖物类
+ * 
+ * @author 
+ *
+ */
 public class WifiInfo implements Serializable {
 
 	/**
@@ -16,10 +22,10 @@ public class WifiInfo implements Serializable {
 
 	public static List<WifiInfo> infos = new ArrayList<WifiInfo>();
 	static {
-		infos.add(new WifiInfo("地点1", 30.4477, 112.262936));
-		infos.add(new WifiInfo("地点2", 30.3377, 112.252936));
-		infos.add(new WifiInfo("地点3", 30.2277, 112.242936));
-		infos.add(new WifiInfo("地点4", 30.1177, 112.232936));
+		infos.add(new WifiInfo("我是WIFI1", 30.333607, 112.248643));
+		infos.add(new WifiInfo("我是WIFI2", 30.343607, 112.258643));
+		infos.add(new WifiInfo("我是WIFI3", 30.353607, 112.268643));
+		infos.add(new WifiInfo("我是WIFI4", 30.363607, 112.278643));
 	}
 
 	public WifiInfo(String name, double latitude, double longitude) {

@@ -9,6 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+/**
+ * À×´ï
+ * 
+ * @author 
+ *
+ */
 public class RadarFragment extends Fragment {
 	private View view;
 	private RadarView radarView;
@@ -16,7 +22,7 @@ public class RadarFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		view = inflater.inflate(R.layout.tab_leida, container, false);
+		view = inflater.inflate(R.layout.layout_radar, container, false);
 		initView();
 		return view;
 	}

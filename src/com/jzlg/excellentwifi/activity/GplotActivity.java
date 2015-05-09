@@ -8,6 +8,12 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.Window;
 
+/**
+ * WIFIÍøÂçÍØÆËÍ¼
+ * 
+ * @author 
+ *
+ */
 public class GplotActivity extends Activity {
 	private ActionBar actionBar;
 

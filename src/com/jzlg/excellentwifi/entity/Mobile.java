@@ -4,6 +4,12 @@ import java.util.Date;
 
 import org.litepal.crud.DataSupport;
 
+/**
+ * 手机信息实体类
+ * 
+ * @author
+ *
+ */
 public class Mobile extends DataSupport {
 	private String moblie_mac;// 手机MAC地址
 	private String moblie_ip;// 手机IP地址

@@ -1,7 +1,6 @@
 package com.jzlg.excellentwifi.activity;
 
 import com.jzlg.excellentwifi.R;
-import com.jzlg.excellentwifi.activity.RefreshListView.IRefreshListener;
 import com.jzlg.excellentwifi.fragment.RadarFragment;
 import com.jzlg.excellentwifi.fragment.MapFragment;
 import com.jzlg.excellentwifi.fragment.MoreFragment;
@@ -21,6 +20,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+/**
+ * 主活动
+ * 
+ * @author 
+ *
+ */
 public class MainActivity extends BaseActivity implements OnClickListener {
 	// 侧滑菜单
 	private SlidingMenu mLeftMenu;
@@ -100,11 +105,6 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 		mLayoutGplot = (RelativeLayout) findViewById(R.id.left_menu_gplot);
 		mLayoutSetting = (RelativeLayout) findViewById(R.id.left_menu_setting);
 	}
-
-	// 切换菜单
-	// public void toggleMenu(View view) {
-	// mLeftMenu.toggle();
-	// }
 
 	// 点击事件
 	@Override

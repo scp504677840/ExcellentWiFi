@@ -5,6 +5,12 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.widget.RelativeLayout;
 
+/**
+ * ¿◊¥Ô…®√ËBaseView
+ * 
+ * @author 
+ *
+ */
 public class BaseView extends RelativeLayout {
 	private Context mContext;
 

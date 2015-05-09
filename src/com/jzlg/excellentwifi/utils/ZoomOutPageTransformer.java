@@ -6,7 +6,7 @@ import android.view.View;
 /**
  * PageView«–ªª∂Øª≠
  * 
- * @author Administrator
+ * @author
  *
  */
 public class ZoomOutPageTransformer implements ViewPager.PageTransformer {

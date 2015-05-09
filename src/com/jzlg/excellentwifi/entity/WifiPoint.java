@@ -1,16 +1,21 @@
 package com.jzlg.excellentwifi.entity;
 
+/**
+ * 雷达WIFI信息点坐标
+ * 
+ * @author 
+ *
+ */
 public class WifiPoint {
-	
+
 	private int x;
-	
+
 	private int y;
-	
-	public WifiPoint(int x1,int y1){
-		x=x1;
-		y=y1;
+
+	public WifiPoint(int x, int y) {
+		this.x = x;
+		this.y = y;
 	}
-	
 
 	public int getX() {
 		return x;
@@ -27,7 +32,5 @@ public class WifiPoint {
 	public void setY(int y) {
 		this.y = y;
 	}
-	
-	
 
 }

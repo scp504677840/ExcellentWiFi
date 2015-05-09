@@ -13,9 +13,7 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.net.wifi.ScanResult;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -23,7 +21,14 @@ import android.view.MotionEvent;
 import com.jzlg.excellentwifi.BuildConfig;
 import com.jzlg.excellentwifi.R;
 import com.jzlg.excellentwifi.entity.WifiPoint;
+import com.jzlg.excellentwifi.utils.WifiAdmin;
 
+/**
+ * 雷达扫描
+ * 
+ * @author 
+ *
+ */
 public class RadarView extends BaseView {
 
 	public static final String TAG = "RadarView";
@@ -46,10 +51,10 @@ public class RadarView extends BaseView {
 	private Bitmap bitmap2;
 	private Bitmap bitmap3;
 	private Paint paint;
+	private WifiAdmin mWifiAdmin = new WifiAdmin(getContext());
 
-	List<WifiPoint> list = new ArrayList<WifiPoint>();
-	private int count = -1;
-	private boolean isDrow = true;// 是否绘制
+	// 点
+	List<WifiPoint> wifiPoints = new ArrayList<WifiPoint>();
 
 	public boolean isSearching() {
 		return isSearching;
@@ -58,6 +63,9 @@ public class RadarView extends BaseView {
 	public void setSearching(boolean isSearching) {
 		this.isSearching = isSearching;
 		offsetArgs = 0;
+		if (mWifiAdmin.checkState() != 3) {
+			mWifiAdmin.openWifi();
+		}
 		invalidate();
 	}
 
@@ -91,22 +99,16 @@ public class RadarView extends BaseView {
 		}
 		if (bitmap3 == null) {
 			bitmap3 = Bitmap.createBitmap(BitmapFactory.decodeResource(
-					this.getResources(), R.drawable.radar_locus_round_click));
+					this.getResources(), R.drawable.radar_wifi_point));
 		}
-
-		list.add(new WifiPoint(100, 200));
-		list.add(new WifiPoint(150, 250));
-		list.add(new WifiPoint(100, 260));
-		list.add(new WifiPoint(50, 100));
 	}
 
-	Canvas canvasS;
+	boolean isCanvas = false;// 是否绘制
 
 	@SuppressLint("DrawAllocation")
 	@Override
 	protected void onDraw(final Canvas canvas) {
 		super.onDraw(canvas);
-		canvasS = canvas;
 		// 画笔
 		paint = new Paint();
 		paint.setAntiAlias(true);// 使用抗锯齿功能
@@ -116,22 +118,17 @@ public class RadarView extends BaseView {
 		canvas.drawBitmap(bitmap, getWidth() / 2 - bitmap.getWidth() / 2,
 				getHeight() / 2 - bitmap.getHeight() / 2, null);
 
-		// drawPoint(canvas);
-		// canvas.drawCircle(100, 200, 20, paint);
-		Thread thread = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				Message message = new Message();
-				message.what = 1;
-				message.obj = canvas;
-				Bundle data = new Bundle();
-				data.putFloat("jiaodu", offsetArgs);
-				message.setData(data);
-				handler.sendMessage(message);
-			}
-		});
-		thread.start();
+		// 当转角为0时不绘制
+		if (offsetArgs == 0) {
+			isCanvas = false;
+		}
+		if (offsetArgs % 180 == 0 && offsetArgs != 0) {
+			wifiPoint();
+			isCanvas = true;
+		}
+		if (isCanvas) {
+			drawPoint(canvas);
+		}
 
 		if (isSearching) {
 
@@ -145,7 +142,6 @@ public class RadarView extends BaseView {
 				offsetArgs = 0;
 			}
 			offsetArgs = offsetArgs + 3;
-			Log.i("角度", "转角度数：" + offsetArgs);
 
 		} else {
 
@@ -160,28 +156,21 @@ public class RadarView extends BaseView {
 			invalidate();
 	}
 
-	private Handler handler = new Handler() {
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case 1:
-				Log.i("运行了", "1233");
-				// Canvas canvas = (Canvas) msg.obj;
-				canvasS.drawCircle(100, 100, 20, paint);
-				break;
+	public void canvasRefresh(Canvas canvas) {
+		Paint paint = new Paint();
+		paint.setAntiAlias(true);// 使用抗锯齿功能
+		paint.setStrokeWidth(3);// 设置笔触的宽度
+		paint.setStyle(Style.FILL);// 设置填充样式为描边STROKE:空心，FILL：圆心
+		paint.setColor(Color.BLUE);
+		canvas.drawCircle(50, 50, 10, paint);
+	}
 
-			default:
-				break;
-			}
-
-		};
-	};
-
+	// 根据WIFI信号强度绘制点
 	private void drawPoint(Canvas canvas) {
-		for (int i = 0; i < list.size(); i++) {
-			WifiPoint point = list.get(i);
+		for (int i = 0; i < wifiPoints.size(); i++) {
+			WifiPoint point = wifiPoints.get(i);
 			canvas.drawBitmap(bitmap3, point.getX(), point.getY(), null);
 		}
-
 	}
 
 	@Override
@@ -199,7 +188,6 @@ public class RadarView extends BaseView {
 	}
 
 	private void handleActionDownEvenet(MotionEvent event) {
-		// 绘制弧
 		RectF rectF = new RectF(getWidth() / 2 - bitmap1.getWidth() / 2,
 				getHeight() / 2 - bitmap1.getHeight() / 2, getWidth() / 2
 						+ bitmap1.getWidth() / 2, getHeight() / 2
@@ -215,4 +203,91 @@ public class RadarView extends BaseView {
 			}
 		}
 	}
+
+	private List<ScanResult> wifiList;
+
+	// WIFI相关
+	private void wifiPoint() {
+		wifiPoints = new ArrayList<WifiPoint>();
+		// 开启扫描WIFI
+		mWifiAdmin.startScan();
+		// 得到WIFI列表
+		wifiList = mWifiAdmin.getWifiList();
+		if (wifiList != null) {
+			for (int i = 0; i < wifiList.size(); i++) {
+				ScanResult scanResult = wifiList.get(i);
+				int level = scanResult.level;
+				int x = getWidth() / 2;
+				int y = getHeight() / 2;
+				int absLevel = Math.abs(level);
+				if (absLevel <= 45) {
+					int[] coordinate = randomD(1);
+					x = coordinate[0];
+					y = coordinate[1];
+				} else if (absLevel <= 65) {
+					int[] coordinate = randomD(2);
+					x = coordinate[0];
+					y = coordinate[1];
+				} else if (absLevel <= 80) {
+					int[] coordinate = randomD(3);
+					x = coordinate[0];
+					y = coordinate[1];
+				} else {
+					int[] coordinate = randomD(4);
+					x = coordinate[0];
+					y = coordinate[1];
+				}
+				WifiPoint wifiPoint = new WifiPoint(x, y);
+				wifiPoints.add(wifiPoint);
+			}
+		}
+	}
+
+	// 得到随机象限和距离
+	private int[] randomD(int strength) {
+		int[] coordinate = new int[2];
+		int Longdistance = 0;// 定义横向距离
+		int Widedistance = 0;// 定义纵向距离
+		int Lran = (int) (Math.random() * 50);// 0-45
+		int Wran = (int) (Math.random() * 50);// 0-45
+		// 根据信号强度给定适合的距离
+		if (strength == 1) {
+			Longdistance = Lran + 10;
+			Widedistance = Wran + 10;
+		} else if (strength == 2) {
+			Longdistance = Lran + 60;
+			Widedistance = Wran + 60;
+		} else if (strength == 3) {
+			Longdistance = Lran + 90;
+			Widedistance = Wran + 90;
+		} else {// 80-90
+			Longdistance = Lran + 120;
+			Widedistance = Wran + 120;
+		}
+		// 接下来是象限的判断
+		int fnum = (int) (Math.random() * 10 + Math.random() * 10 + 10);
+		if (fnum <= 14) {// 10 11 12 13 14第一象限
+			coordinate[0] = getWidth() / 2 + bitmap1.getWidth() / 2
+					+ Longdistance;
+			coordinate[1] = getHeight() / 2 - bitmap1.getHeight() / 2
+					- Widedistance;
+		} else if (fnum <= 20) {// 15 16 17 18 19 20第二象限
+			coordinate[0] = getWidth() / 2 + bitmap1.getWidth() / 2
+					+ Longdistance;
+			coordinate[1] = getHeight() / 2 + bitmap1.getHeight() / 2
+					+ Widedistance;
+		} else if (fnum <= 25) {// 21 22 23 24 25第三象限
+			coordinate[0] = getWidth() / 2 - bitmap1.getWidth() / 2
+					- Longdistance;
+			coordinate[1] = getHeight() / 2 + bitmap1.getHeight() / 2
+					+ Widedistance;
+		} else {// 26 27 28 29 30第四象限
+			coordinate[0] = getWidth() / 2 - bitmap1.getWidth() / 2
+					- Longdistance;
+			coordinate[1] = getHeight() / 2 - bitmap1.getHeight() / 2
+					- Widedistance;
+		}
+		return coordinate;
+	}
+
 }

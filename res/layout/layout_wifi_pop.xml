@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="200dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/wifi_tv_show"
     android:gravity="center"
@@ -11,14 +11,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="20dp"
         android:gravity="center"
-        android:text="szcpkfb"
-        android:textSize="15sp" />
+        android:textSize="26sp" />
 
     <EditText
         android:id="@+id/pop_password"
-        android:layout_width="150dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:hint="@string/popinputps"
         android:inputType="textPassword" />
 
@@ -30,8 +31,11 @@
 
         <Button
             android:id="@+id/pop_bt_ok"
-            android:layout_width="74dp"
-            android:layout_height="30dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_weight="1"
             android:background="@drawable/wifi_button_state"
             android:paddingRight="10dp"
             android:text="@string/popconnection"
@@ -39,8 +43,11 @@
 
         <Button
             android:id="@+id/pop_bt_cancel"
-            android:layout_width="74dp"
-            android:layout_height="30dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_weight="1"
             android:background="@drawable/wifi_button_state"
             android:paddingLeft="10dp"
             android:text="@string/popcancel"

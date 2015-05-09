@@ -2,6 +2,7 @@ package com.jzlg.excellentwifi.activity;
 
 import com.jzlg.excellentwifi.R;
 
+import android.R.integer;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.net.wifi.WifiManager;
@@ -13,13 +14,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * WIFI位置
+ * 
+ * @author
+ *
+ */
 public class WifiLocation extends Activity {
 	private ActionBar actionBar;
 	private TextView wifiStrength;
 	private ImageView wifiStrengthImg;
-	private Refresh refresh;
+	private Handler refresh;
 	private RefreshC refreshC;
-	private boolean isRefresh = true;
+	private boolean isRefresh = true;// 是否刷新
 	private WifiManager wifi;
 
 	@Override
@@ -39,16 +46,17 @@ public class WifiLocation extends Activity {
 		wifiStrengthImg = (ImageView) findViewById(R.id.wifi_location_strengthimg);
 		refresh = new Refresh();
 		refreshC = new RefreshC();
+		refreshC.start();
 	}
 
 	@Override
 	protected void onStart() {
-		super.onStart();
 		int rssi = wifi.getConnectionInfo().getRssi();
-		if (rssi != -999) {
+		if (rssi != -999 || rssi != -9999) {
 			isRefresh = true;
-			refreshC.start();
+
 		}
+		super.onStart();
 	}
 
 	@Override
@@ -57,12 +65,28 @@ public class WifiLocation extends Activity {
 		super.onStop();
 	}
 
+	int min = 0;
+
 	class Refresh extends Handler {
 		@Override
 		public void handleMessage(Message msg) {
-			String ms = (String) msg.obj;
-			wifiStrength.setText(ms);
+			String str = (String) msg.obj;
+			int max = Integer.valueOf(str);
+			int abs = Math.abs(max);
+			wifiStrength.setText("");
+			// wifiStrength.setText("");
+			String yl = "您正在远离目标";
+			String fj = "目标就在附近";
+			if (min == 0)
+				min = abs;
+			if (min > abs)
+				min = abs;
+			if (abs - min > 35)
+				wifiStrength.setText(yl + abs);
+			if (min <= 35)
+				wifiStrength.setText(fj + abs);
 		}
+
 	}
 
 	class RefreshC extends Thread {
@@ -95,4 +119,5 @@ public class WifiLocation extends Activity {
 		}
 		return true;
 	}
+
 }

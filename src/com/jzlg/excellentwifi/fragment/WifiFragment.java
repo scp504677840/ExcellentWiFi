@@ -6,18 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.jzlg.excellentwifi.R;
-import com.jzlg.excellentwifi.activity.RefreshListView;
-import com.jzlg.excellentwifi.activity.RefreshListView.IRefreshListener;
 import com.jzlg.excellentwifi.utils.WifiAdmin;
 
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.net.wifi.ScanResult;
-import android.net.wifi.WifiConfiguration;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,27 +21,26 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
+/**
+ * WIFIFragment
+ * 
+ * @author 
+ *
+ */
 public class WifiFragment extends Fragment implements OnClickListener,
-		OnItemClickListener, OnScrollListener, IRefreshListener {
-	private WifiConfiguration mConfig;
+		OnItemClickListener, OnScrollListener {
 	private View view;
 	private ImageButton onoffWifi;
 	private WifiAdmin mWifiAdmin;
-	private RefreshListView listview;
 	private List<Map<String, Object>> listdata;
 	private SimpleAdapter mSimpleAdapter;
 	private List<ScanResult> list;
-	private ScanResult mScanResult;
-	private boolean isRefresh = false;// 是否刷新
 	private Context mContext;
-	private LinearLayout loginLayout;
+	private ListView listView;
 
 	public WifiFragment(Context context) {
 		mContext = context;
@@ -57,7 +49,7 @@ public class WifiFragment extends Fragment implements OnClickListener,
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		view = inflater.inflate(R.layout.tab_wifi, container, false);
+		view = inflater.inflate(R.layout.layout_wifi, container, false);
 		initView();
 		initEvent();
 		return view;
@@ -65,8 +57,8 @@ public class WifiFragment extends Fragment implements OnClickListener,
 
 	// 初始化事件
 	private void initEvent() {
-		listview.setOnItemClickListener(this);
-		listview.setOnScrollListener(this);
+		listView.setOnItemClickListener(this);
+		listView.setOnScrollListener(this);
 		onoffWifi.setOnClickListener(this);
 	}
 
@@ -75,48 +67,60 @@ public class WifiFragment extends Fragment implements OnClickListener,
 		onoffWifi = (ImageButton) view.findViewById(R.id.main_tab_wifi_onoff);
 		// 初始化WifiAdmin
 		mWifiAdmin = new WifiAdmin(mContext);
-		listview = (RefreshListView) view
-				.findViewById(R.id.main_tab_wifi_listview);
-		listview.setInterface(this);
+		listView = (ListView) view.findViewById(R.id.main_tab_wifi_listview);
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
 	}
 
 	// 扫描网络
 	private void saomiao() {
 		listdata = new ArrayList<Map<String, Object>>();
 		// 适配器
-		mSimpleAdapter = new SimpleAdapter(view.getContext(), getData(),
+		mSimpleAdapter = new SimpleAdapter(view.getContext(), getWfData(),
 				R.layout.item_wifi, new String[] { "ssid", "levelimg" },
 				new int[] { R.id.item_wifi_ssid, R.id.item_wifi_level });
 		// 加载适配器
-		listview.setAdapter(mSimpleAdapter);
+		listView.setAdapter(mSimpleAdapter);
+	}
+
+	private List<Map<String, Object>> getDatas() {
+		for (int i = 0; i < 20; i++) {
+			HashMap<String, Object> map = new HashMap<String, Object>();
+			map.put("ssid", "我是WIFI" + i);
+			map.put("levelimg", R.drawable.ic_launcher);
+			listdata.add(map);
+		}
+		return listdata;
 	}
 
 	// 数据源
-	private List<Map<String, Object>> getData() {
-		// 开始扫描网络
-		mWifiAdmin.startScan();
-
-		// 扫描结果列表
-		list = mWifiAdmin.getWifiList();
-
-		if (list != null) {
-			for (int i = 0; i < list.size(); i++) {
-				mScanResult = list.get(i);
-				Map<String, Object> map = new HashMap<String, Object>();
-				map.put("ssid", mScanResult.SSID);
-				int level = mScanResult.level;
-				if (Math.abs(level) <= 45) {
-					map.put("levelimg", R.drawable.wifi01);
-				} else if (Math.abs(level) <= 65) {
-					map.put("levelimg", R.drawable.wifi02);
-				} else if (Math.abs(level) <= 80) {
-					map.put("levelimg", R.drawable.wifi03);
-				} else if (Math.abs(level) <= 100) {
-					map.put("levelimg", R.drawable.wifi04);
-				} else {
-					map.put("levelimg", R.drawable.wifi05);
+	private List<Map<String, Object>> getWfData() {
+		if (mWifiAdmin.checkState() == 3) {
+			mWifiAdmin.startScan();
+			// 扫描结果列表
+			list = mWifiAdmin.getWifiList();
+			if (list != null) {
+				for (int i = 0; i < list.size(); i++) {
+					ScanResult sc = list.get(i);
+					Map<String, Object> map = new HashMap<String, Object>();
+					map.put("ssid", sc.SSID);
+					int level = sc.level;
+					if (Math.abs(level) <= 45) {
+						map.put("levelimg", R.drawable.wifi01);
+					} else if (Math.abs(level) <= 65) {
+						map.put("levelimg", R.drawable.wifi02);
+					} else if (Math.abs(level) <= 80) {
+						map.put("levelimg", R.drawable.wifi03);
+					} else if (Math.abs(level) <= 100) {
+						map.put("levelimg", R.drawable.wifi04);
+					} else {
+						map.put("levelimg", R.drawable.wifi05);
+					}
+					listdata.add(map);
 				}
-				listdata.add(map);
 			}
 		}
 		return listdata;
@@ -127,8 +131,12 @@ public class WifiFragment extends Fragment implements OnClickListener,
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.main_tab_wifi_onoff:
-			mWifiAdmin.openWifi();
-			saomiao();
+			if (mWifiAdmin.checkState() != 3) {
+				mWifiAdmin.openWifi();
+			}
+			if (mWifiAdmin.checkState() == 3) {
+				saomiao();
+			}
 			break;
 
 		default:
@@ -187,35 +195,14 @@ public class WifiFragment extends Fragment implements OnClickListener,
 	public void onScrollStateChanged(AbsListView view, int scrollState) {
 		switch (scrollState) {
 		case SCROLL_STATE_FLING:
-			Log.i("ListView", "用户用力滑动");
 			break;
 		case SCROLL_STATE_IDLE:
-			Log.i("ListView", "视图停止滑动");
 			break;
 		case SCROLL_STATE_TOUCH_SCROLL:
-			Log.i("ListView", "用户正在滑动");
 			break;
 		default:
 			break;
 		}
-	}
-
-	/**
-	 * 刷新数据
-	 */
-	public void onRefresh() {
-		Handler handler = new Handler();
-		handler.postDelayed(new Runnable() {
-
-			@Override
-			public void run() {
-				// 获取最新的数据
-				saomiao();
-				// 通知listview刷新数据完毕
-				listview.refreshComplete();
-			}
-		}, 3000);
-
 	}
 
 }

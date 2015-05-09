@@ -8,6 +8,12 @@ import android.util.Log;
 import android.view.Window;
 import android.widget.Toast;
 
+/**
+ * Activity基类
+ * 
+ * @author 
+ *
+ */
 public class BaseActivity extends FragmentActivity {
 	private int count = 0;
 
@@ -15,7 +21,7 @@ public class BaseActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// 隐藏标题栏
-//		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		// requestWindowFeature(Window.FEATURE_NO_TITLE);
 		// 获取当前实例的类名
 		Log.i("BaseActivity", getClass().getSimpleName());
 		ActivityCollector.addActivity(this);

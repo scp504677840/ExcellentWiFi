@@ -5,6 +5,12 @@ import java.util.List;
 
 import org.litepal.crud.DataSupport;
 
+/**
+ * WIFI信息实体类
+ * 
+ * @author 
+ *
+ */
 public class Wifi extends DataSupport {
 	private String wifi_mac;// MAC地址
 	private String wifi_pwd;// 密码

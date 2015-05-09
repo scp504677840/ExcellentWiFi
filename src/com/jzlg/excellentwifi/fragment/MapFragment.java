@@ -45,6 +45,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+/**
+ * WIFI地理位置在百度地图上显示
+ * 
+ * @author
+ *
+ */
 public class MapFragment extends Fragment {
 	private View view;
 	private Context mContext;
@@ -149,6 +155,7 @@ public class MapFragment extends Fragment {
 	// 初始化覆盖物
 	private void initMarker() {
 		mMarker = BitmapDescriptorFactory.fromResource(R.drawable.map_marke);
+		addOverlay(WifiInfo.infos);// 添加覆盖物
 	}
 
 	// 定位初始化
@@ -189,7 +196,7 @@ public class MapFragment extends Fragment {
 		option.setIsNeedAddress(true);// 位置，一定要设置，否则后面得不到地址
 		option.setOpenGps(true);// 打开GPS
 		option.setScanSpan(1000);// 多长时间进行一次请求
-		//option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);//精确定位
+		// option.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);//精确定位
 		mLocationClient.setLocOption(option);// 使用设置
 	}
 
@@ -368,13 +375,6 @@ public class MapFragment extends Fragment {
 
 				isFirstIn = false;
 			}
-
-//			 Toast.makeText(
-//			 view.getContext(),
-//			 "定位成功：纬度" + location.getLatitude() + "经度："
-//			 + location.getLongitude() + "地址是："
-//			 + location.getAddrStr() + "城市是："
-//			 + location.getCity(), 0).show();
 
 		}
 	}

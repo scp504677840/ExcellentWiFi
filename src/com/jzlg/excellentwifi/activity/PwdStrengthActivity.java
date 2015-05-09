@@ -8,6 +8,12 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.Window;
 
+/**
+ * √‹¬Î«ø∂»
+ * 
+ * @author 
+ *
+ */
 public class PwdStrengthActivity extends Activity {
 	private ActionBar actionBar;
 
