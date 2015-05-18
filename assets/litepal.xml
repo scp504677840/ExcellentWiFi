@@ -12,7 +12,6 @@
     <list>
         <mapping class="com.jzlg.excellentwifi.entity.WifiInfo"></mapping>
         <mapping class="com.jzlg.excellentwifi.entity.Mobile"></mapping>
-        <mapping class="com.jzlg.excellentwifi.entity.WIFILine"></mapping>
     </list>
 
 </litepal>

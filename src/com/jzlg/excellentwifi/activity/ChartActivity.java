@@ -1,10 +1,7 @@
 package com.jzlg.excellentwifi.activity;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-
-import org.litepal.crud.DataSupport;
 
 import lecho.lib.hellocharts.listener.LineChartOnValueSelectListener;
 import lecho.lib.hellocharts.model.Axis;
@@ -16,23 +13,19 @@ import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.LineChartView;
 
 import com.jzlg.excellentwifi.R;
-import com.jzlg.excellentwifi.entity.WIFILine;
 
-import android.R.integer;
 import android.app.ActionBar;
 import android.app.Activity;
-import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 /**
  * 图表
  * 
- * @author 
+ * @author
  *
  */
 public class ChartActivity extends Activity implements
@@ -44,16 +37,14 @@ public class ChartActivity extends Activity implements
 	private boolean isFilled = false;// 是否填充
 	private boolean hasLabels = true;// 是否显示数值
 	private boolean hasLabelsOnlyForSelected = false;// 仅仅对选中的点进行显示数值
-	private boolean hasLines = true;// 线
-	private boolean hasPoints = true;// 点
+	private boolean hasLines = true;// 显示线
+	private boolean hasPoints = true;// 显示点
 	private LineChartData data;
 	private boolean hasAxes = true;
 	private boolean hasAxesNames = true;
 	private ActionBar actionBar;
 	private WifiManager wifi;// WIFI管理
 	private boolean isRefresh = true;// 是否刷新
-	private WIFILine mWifiLine;// WIFI信号描述实体类
-	private WifiInfo connectionInfo;// WIFI配置信息
 	private ArrayList<Float> listLevel;
 
 	@Override
@@ -70,7 +61,6 @@ public class ChartActivity extends Activity implements
 	}
 
 	private void initData() {
-		generateValues();
 		generateData();
 	}
 
@@ -93,12 +83,16 @@ public class ChartActivity extends Activity implements
 		@Override
 		public void run() {
 			while (isRefresh) {
-				doWifi();// 处理好数据
 				Message message = new Message();
 				message.what = 1;
+				int level = wifi.getConnectionInfo().getRssi();
+				if (listLevel.size() > 60) {
+					listLevel.remove(0);
+				}
+				listLevel.add(Float.valueOf(level + ""));
 				try {
 					thread.sleep(1000);
-					handler.handleMessage(message);
+					handler.sendMessage(message);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -106,6 +100,7 @@ public class ChartActivity extends Activity implements
 		}
 	});
 
+	// 初始化组件
 	private void initView() {
 		actionBar = getActionBar();
 		actionBar.setTitle("信号走势");
@@ -113,29 +108,8 @@ public class ChartActivity extends Activity implements
 		actionBar.setDisplayHomeAsUpEnabled(true);// 开启导航图标
 		mChartView = (LineChartView) findViewById(R.id.chart_linechart);
 		wifi = (WifiManager) getSystemService(WIFI_SERVICE);
-		connectionInfo = wifi.getConnectionInfo();
 		listLevel = new ArrayList<Float>();
-		mWifiLine = new WIFILine();
 		thread.start();// 开启线程
-	}
-
-	// 对WIFI的信号进行处理
-	private void doWifi() {
-//		int seconds = new Date().getSeconds();// 秒
-		int level = connectionInfo.getRssi();
-//		int count = mWifiLine.count(WIFILine.class);
-//		if (count > 60) {
-//			WIFILine findFirst = mWifiLine.findFirst(WIFILine.class);
-//			findFirst.delete();
-//		}
-		if (listLevel.size() > 60) {
-			listLevel.remove(0);
-		}
-		listLevel.add(Float.valueOf(level+""));
-//		mWifiLine.setMacAddress(connectionInfo.getMacAddress());
-//		mWifiLine.setSeconds(seconds);
-//		mWifiLine.setLevel(level);
-//		mWifiLine.save();// 保存数据
 	}
 
 	// 绘制数据
@@ -189,16 +163,6 @@ public class ChartActivity extends Activity implements
 		mChartView.setLineChartData(data);
 	}
 
-	@SuppressWarnings("static-access")
-	private void generateValues() {
-		List<WIFILine> findAll = mWifiLine.findAll(WIFILine.class);
-//		listLevel = new ArrayList<Float>();
-//		for (int j = 0; j < 1; ++j) {
-//			listLevel.add(Float.valueOf(mWifiLine.findLast(WIFILine.class)+""));
-//			listLevel.add(Float.valueOf(wifi.getConnectionInfo().getRssi()+""));
-//		}
-	}
-
 	// 触摸事件
 	@Override
 	public void onValueDeselected() {
@@ -206,11 +170,6 @@ public class ChartActivity extends Activity implements
 
 	@Override
 	public void onValueSelected(int lineIndex, int pointIndex, PointValue value) {
-		// Toast.makeText(
-		// ChartActivity.this,
-		// "值Selected: " + value + "线lineIndex:" + lineIndex
-		// + "点pointIndex:" + pointIndex, Toast.LENGTH_SHORT)
-		// .show();
 	}
 
 	// 菜单选项事件
@@ -230,14 +189,12 @@ public class ChartActivity extends Activity implements
 	@Override
 	protected void onStart() {
 		isRefresh = true;// 开始刷新
-		mWifiLine.deleteAll(WIFILine.class);
 		super.onStart();
 	}
 
 	@Override
 	protected void onStop() {
 		isRefresh = false;// 停止刷新
-		mWifiLine.deleteAll(WIFILine.class);
 		super.onStop();
 	}
 

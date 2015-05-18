@@ -3,7 +3,6 @@ package com.jzlg.excellentwifi.activity;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -26,23 +25,13 @@ import com.jzlg.excellentwifi.utils.WifiAdmin;
 /**
  * 雷达扫描
  * 
- * @author 
+ * @author
  *
  */
 public class RadarView extends BaseView {
 
 	public static final String TAG = "RadarView";
 	public static final boolean D = BuildConfig.DEBUG;
-
-	@SuppressWarnings("unused")
-	private long TIME_DIFF = 1500;
-
-	int[] lineColor = new int[] { 0x7B, 0x7B, 0x7B };
-	int[] innerCircle0 = new int[] { 0xb9, 0xff, 0xFF };
-	int[] innerCircle1 = new int[] { 0xdf, 0xff, 0xFF };
-	int[] innerCircle2 = new int[] { 0xec, 0xff, 0xFF };
-
-	int[] argColor = new int[] { 0xF3, 0xf3, 0xfa };
 
 	private float offsetArgs = 0;
 	private boolean isSearching = false;
@@ -105,7 +94,6 @@ public class RadarView extends BaseView {
 
 	boolean isCanvas = false;// 是否绘制
 
-	@SuppressLint("DrawAllocation")
 	@Override
 	protected void onDraw(final Canvas canvas) {
 		super.onDraw(canvas);
@@ -122,7 +110,8 @@ public class RadarView extends BaseView {
 		if (offsetArgs == 0) {
 			isCanvas = false;
 		}
-		if (offsetArgs % 180 == 0 && offsetArgs != 0) {
+
+		if (offsetArgs % 60 == 0 && offsetArgs != 0) {
 			wifiPoint();
 			isCanvas = true;
 		}
@@ -138,10 +127,12 @@ public class RadarView extends BaseView {
 			// 以视图中心为轴心
 			canvas.rotate(offsetArgs, getWidth() / 2, getHeight() / 2);
 			canvas.drawBitmap(bitmap2, null, rMoon, null);
-			if (offsetArgs == 360) {
+			if (offsetArgs == 720) {
 				offsetArgs = 0;
+				isSearching = false;
+				drawPoint(canvas);
 			}
-			offsetArgs = offsetArgs + 3;
+			offsetArgs = offsetArgs + 1;
 
 		} else {
 
@@ -205,6 +196,7 @@ public class RadarView extends BaseView {
 	}
 
 	private List<ScanResult> wifiList;
+	private WifiPoint wifiPoint;
 
 	// WIFI相关
 	private void wifiPoint() {
@@ -237,7 +229,7 @@ public class RadarView extends BaseView {
 					x = coordinate[0];
 					y = coordinate[1];
 				}
-				WifiPoint wifiPoint = new WifiPoint(x, y);
+				wifiPoint = new WifiPoint(x, y);
 				wifiPoints.add(wifiPoint);
 			}
 		}

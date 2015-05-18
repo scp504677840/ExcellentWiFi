@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lint>
     <issue id="ClickableViewAccessibility" severity="ignore" />
+    <issue id="DrawAllocation" severity="ignore" />
     <issue id="HandlerLeak" severity="ignore">
         <ignore path="src/com/jzlg/excellentwifi/fragment/MainWifiFragemnt.java" />
     </issue>

@@ -11,11 +11,11 @@ import android.widget.Toast;
 /**
  * Activity基类
  * 
- * @author 
+ * @author
  *
  */
 public class BaseActivity extends FragmentActivity {
-	private int count = 0;
+	private long time = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +35,12 @@ public class BaseActivity extends FragmentActivity {
 
 	@Override
 	public void onBackPressed() {
-		if (count == 1) {
-			count--;
+		if (System.currentTimeMillis() - time < 3000) {
+			time = 0;
 			ActivityCollector.finishAll();
 		} else {
-			count++;
-			Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+			time = System.currentTimeMillis();
+			Toast.makeText(this, "再按一次返回键退出程序", Toast.LENGTH_SHORT).show();
 		}
 	}
 

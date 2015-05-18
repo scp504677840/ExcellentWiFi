@@ -28,6 +28,7 @@ public class WifiLocation extends Activity {
 	private RefreshC refreshC;
 	private boolean isRefresh = true;// 是否刷新
 	private WifiManager wifi;
+	private int min = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -49,42 +50,24 @@ public class WifiLocation extends Activity {
 		refreshC.start();
 	}
 
-	@Override
-	protected void onStart() {
-		int rssi = wifi.getConnectionInfo().getRssi();
-		if (rssi != -999 || rssi != -9999) {
-			isRefresh = true;
-
-		}
-		super.onStart();
-	}
-
-	@Override
-	protected void onStop() {
-		isRefresh = false;
-		super.onStop();
-	}
-
-	int min = 0;
-
 	class Refresh extends Handler {
 		@Override
 		public void handleMessage(Message msg) {
 			String str = (String) msg.obj;
 			int max = Integer.valueOf(str);
 			int abs = Math.abs(max);
-			wifiStrength.setText("");
+			wifiStrength.setText(abs+"");
 			// wifiStrength.setText("");
 			String yl = "您正在远离目标";
 			String fj = "目标就在附近";
-			if (min == 0)
-				min = abs;
-			if (min > abs)
-				min = abs;
-			if (abs - min > 35)
-				wifiStrength.setText(yl + abs);
-			if (min <= 35)
-				wifiStrength.setText(fj + abs);
+//			if (min == 0)
+//				min = abs;
+//			if (min > abs)
+//				min = abs;
+//			if (abs - min > 35)
+//				wifiStrength.setText(yl + abs);
+//			if (min <= 35)
+//				wifiStrength.setText(fj + abs);
 		}
 
 	}
@@ -120,4 +103,19 @@ public class WifiLocation extends Activity {
 		return true;
 	}
 
+	@Override
+	protected void onStart() {
+		int rssi = wifi.getConnectionInfo().getRssi();
+		if (rssi != -999 || rssi != -9999) {
+			isRefresh = true;
+
+		}
+		super.onStart();
+	}
+
+	@Override
+	protected void onStop() {
+		isRefresh = false;
+		super.onStop();
+	}
 }
