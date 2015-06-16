@@ -1,14 +1,16 @@
 package com.jzlg.excellentwifi.utils;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.List;
 
-import com.jzlg.excellentwifi.R;
-
 import android.app.ActionBar.LayoutParams;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.drawable.BitmapDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiInfo;
@@ -25,11 +27,13 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.jzlg.excellentwifi.R;
+
 /**
  * SSID:Service Set ID 服务集识别码 WEP:Wired Equivalent Privacy无线安全
  * 2种强度：40bits和104bits WEP2：128bit WAP/WAP2无线安全 WPS WMM
  * 
- * @author
+ * @author 郭旭、宋春鹏、王大伟
  *
  */
 public class WifiAdmin {
@@ -57,6 +61,9 @@ public class WifiAdmin {
 		mContext = context;
 	}
 
+	public WifiManager getWifiManager(){
+		return mWifiManager;
+	}
 	/**
 	 * 打开wifi
 	 */
@@ -349,9 +356,9 @@ public class WifiAdmin {
 				String passwords = password.getText().toString().trim();
 				if (passwords != null && !passwords.equals("")) {
 					addNetwork(createWifiInfo(ssid, passwords, 3));
+					WifiEntity.wifiPwd=password.getText().toString();
 					mShowCPopu.dismiss();
 				}
-
 			}
 		});
 		// 取消按钮
@@ -363,6 +370,103 @@ public class WifiAdmin {
 			}
 		});
 		mShowCPopu.showAtLocation(mShowCView, Gravity.CENTER, 0, 0);
+	}
+	
+	public WifiConfiguration tryToConnect(String SSID, String Password,
+			int Type) {
+		WifiConfiguration config = new WifiConfiguration();
+		config.SSID = "\"" + SSID + "\"";
+		config.allowedPairwiseCiphers
+				.set(WifiConfiguration.PairwiseCipher.CCMP);
+		config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+		config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+		config.allowedPairwiseCiphers
+				.set(WifiConfiguration.PairwiseCipher.TKIP);
+		if (Type == 1)// Data.WIFICIPHER_NOPASS)
+		{
+			config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+			config.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
+			config.wepTxKeyIndex = 0;
+		}
+		if (Type == 2)// Data.WIFICIPHER_WEP)
+		{
+			config.hiddenSSID = true;
+			config.wepKeys[0] = "\"" + Password + "\"";
+			config.allowedAuthAlgorithms
+					.set(WifiConfiguration.AuthAlgorithm.SHARED);
+			config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+			config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+			config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);
+			config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+			config.wepTxKeyIndex = 0;
+		}
+		if (Type == 3)// Data.WIFICIPHER_WPA)
+		{
+			config.preSharedKey = "\"" + Password + "\"";
+			config.hiddenSSID = true;
+			config.status = WifiConfiguration.Status.ENABLED;
+			config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+			config.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+		}
+		return config;
+	}
+	
+	public int getWifiMMType(ScanResult result){
+		if(result.capabilities.contains("WPA2-PSK"))
+			return 3;
+		else if(result.capabilities.contains("WPA-PSK"))
+			return 3;
+		else if(result.capabilities.contains("WEP"))
+			return 2;
+		else
+			return 1;
+	}
+	
+	public String getFileContent(Context context,String filename){
+		String content="";
+		FileReader reader = null;
+		BufferedReader br = null;
+		File file = new File("/sdcard", filename);
+		if (file.exists()) {
+			try {
+				reader = new FileReader(file);
+				br = new BufferedReader(reader);
+				char[] buffer = new char[1024];
+				br.read(buffer);
+				content = new String(buffer);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}finally{
+				try {
+					br.close();
+					reader.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return content;
+	}
+	
+	public boolean isConnect(Context context){
+		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo info = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		return info.isConnected();
+	}
+	
+	public int theMMIntension(String password){
+		int intension = 0;
+		int size = password.length();
+		if(size<8){
+			return 1;
+		}else if(size<10){
+			return 2;
+		}else if(size<12){
+			return 3;
+		}
+		return intension;
 	}
 
 }

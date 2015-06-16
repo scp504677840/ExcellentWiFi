@@ -11,7 +11,7 @@ import android.widget.Toast;
 /**
  * Activity»ùÀà
  * 
- * @author
+ * @author ËÎ´ºÅô
  *
  */
 public class BaseActivity extends FragmentActivity {

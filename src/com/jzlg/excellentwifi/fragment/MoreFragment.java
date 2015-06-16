@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 /**
  * 关于我们
  * 
- * @author
+ * @author 宋春鹏
  *
  */
 public class MoreFragment extends Fragment {

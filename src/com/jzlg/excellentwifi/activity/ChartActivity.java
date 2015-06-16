@@ -25,7 +25,7 @@ import android.view.MenuItem;
 /**
  * Õº±Ì
  * 
- * @author
+ * @author ÀŒ¥∫≈Ù
  *
  */
 public class ChartActivity extends Activity implements

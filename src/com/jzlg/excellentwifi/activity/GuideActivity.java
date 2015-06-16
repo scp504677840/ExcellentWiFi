@@ -23,7 +23,7 @@ import com.jzlg.excellentwifi.utils.ViewPagerCompat.OnPageChangeListener;
 /**
  * Òýµ¼Ò³
  * 
- * @author
+ * @author ËÎ´ºÅô
  *
  */
 public class GuideActivity extends BaseActivity implements OnPageChangeListener {

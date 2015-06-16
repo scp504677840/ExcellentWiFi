@@ -8,7 +8,7 @@ import android.widget.RelativeLayout;
 /**
  * À×´ïÉ¨ÃèBaseView
  * 
- * @author 
+ * @author ËÎ´ºÅô
  *
  */
 public class BaseView extends RelativeLayout {

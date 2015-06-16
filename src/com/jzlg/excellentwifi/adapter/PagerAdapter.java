@@ -8,6 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+/**
+ * “˝µº“≥  ≈‰∆˜
+ * 
+ * @author ÀŒ¥∫≈Ù
+ *
+ */
 public class PagerAdapter extends android.support.v4.view.PagerAdapter {
 
 	private Context context;
@@ -25,13 +31,13 @@ public class PagerAdapter extends android.support.v4.view.PagerAdapter {
 
 	@Override
 	public void destroyItem(View container, int position, Object object) {
-		((ViewGroup)container).removeView(list.get(position));
+		((ViewGroup) container).removeView(list.get(position));
 	}
 
 	// º”‘ÿView
 	@Override
 	public Object instantiateItem(View container, int position) {
-		((ViewGroup)container).addView(list.get(position));
+		((ViewGroup) container).addView(list.get(position));
 		return list.get(position);
 	}
 

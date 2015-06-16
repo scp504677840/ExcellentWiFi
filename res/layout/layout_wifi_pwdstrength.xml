@@ -3,14 +3,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-    
-    
-    
-    <TextView 
+
+    <ImageButton
+        android:id="@+id/wifi_pwdstrength_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="密码强度"
-        />
-    
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/wifi_pwdstrength_64x64_levleoff"
+        android:text="@string/wifi_pwdstrength_start" />
+
+    <ProgressBar
+        android:id="@+id/wifi_pwdstrength_progressbar"
+        style="@android:style/Widget.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:max="100"
+        android:progressDrawable="@drawable/progressdialog" />
+
+    <TextView
+        android:id="@+id/wifi_pwdstrength_resulut"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:singleLine="true"
+        android:text="请开始检测" />
 
 </LinearLayout>

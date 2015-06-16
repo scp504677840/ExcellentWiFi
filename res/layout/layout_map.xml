@@ -10,5 +10,14 @@
         android:layout_height="fill_parent"
         android:clickable="true" />
 
+    <ImageButton
+        android:id="@+id/baidumap_myLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/wifi_map_mylocation_64x64" />
 
 </RelativeLayout>

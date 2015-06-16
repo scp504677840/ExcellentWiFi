@@ -34,7 +34,7 @@
     <string name="actionbar_three">第三个</string>
     <string name="actionbar_four">第四个</string>
 
-    <!-- 菜单 -->
+    <!-- 地图热点 -->
     <string name="menu_map_common">普通地图</string>
     <string name="menu_map_site">卫星地图</string>
     <string name="menu_map_traffic">实时地图</string>
@@ -43,5 +43,10 @@
     <string name="menu_map_sensormode_following">跟随模式</string>
     <string name="menu_map_sensormode_compass">罗盘模式</string>
     <string name="menu_map_add_overlay">添加覆盖物</string>
+    <!-- 设置 -->
+    <string name="Setting_textview">设置端口</string>
+    <!-- 检测密码强度 -->
+    <string name="wifi_menu_pwdstrength">检测密码强度</string>
+    <string name="wifi_pwdstrength_start">开始检测</string>
 
 </resources>

@@ -19,7 +19,7 @@ import android.widget.LinearLayout;
 /**
  * ≤‡ª¨≤Àµ•
  * 
- * @author
+ * @author ÀŒ¥∫≈Ù
  *
  */
 public class SlidingMenu extends HorizontalScrollView {

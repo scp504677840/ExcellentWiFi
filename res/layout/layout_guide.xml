@@ -13,8 +13,11 @@
         android:id="@+id/guide_tomain"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="60dp"
+        android:background="@drawable/white_selector"
         android:text="@string/btn_guide_tomain"
-        android:layout_centerInParent="true"
         android:visibility="gone" />
 
 </RelativeLayout>

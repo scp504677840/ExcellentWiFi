@@ -7,13 +7,13 @@ import org.litepal.crud.DataSupport;
 /**
  * 手机信息实体类
  * 
- * @author
+ * @author 宋春鹏
  *
  */
 public class Mobile extends DataSupport {
 	private String moblie_mac;// 手机MAC地址
 	private String moblie_ip;// 手机IP地址
-	private Date moblie_date;// 时间
+	private String moblie_date;// 时间
 	private Wifi wifi;// Wifi类
 
 	public String getMoblie_mac() {
@@ -32,11 +32,11 @@ public class Mobile extends DataSupport {
 		this.moblie_ip = moblie_ip;
 	}
 
-	public Date getMoblie_date() {
+	public String getMoblie_date() {
 		return moblie_date;
 	}
 
-	public void setMoblie_date(Date moblie_date) {
+	public void setMoblie_date(String moblie_date) {
 		this.moblie_date = moblie_date;
 	}
 

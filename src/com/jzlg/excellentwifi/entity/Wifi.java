@@ -8,7 +8,7 @@ import org.litepal.crud.DataSupport;
 /**
  * WIFI信息实体类
  * 
- * @author 
+ * @author 宋春鹏
  *
  */
 public class Wifi extends DataSupport {

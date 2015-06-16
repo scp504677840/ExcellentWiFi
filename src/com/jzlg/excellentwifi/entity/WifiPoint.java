@@ -3,7 +3,7 @@ package com.jzlg.excellentwifi.entity;
 /**
  * 雷达WIFI信息点坐标
  * 
- * @author 
+ * @author 宋春鹏
  *
  */
 public class WifiPoint {

@@ -8,7 +8,7 @@ import android.view.View;
 /**
  * ×Ô¶¨ÒåPageView
  * 
- * @author
+ * @author ËÎ´ºÅô
  *
  */
 public class MyViewPageWithTransformerAnim extends ViewPager {

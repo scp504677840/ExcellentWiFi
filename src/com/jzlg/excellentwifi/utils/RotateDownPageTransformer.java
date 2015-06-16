@@ -8,7 +8,7 @@ import android.view.View;
 /**
  * PageView«–ªª∂Øª≠
  * 
- * @author
+ * @author ÀŒ¥∫≈Ù
  *
  */
 public class RotateDownPageTransformer implements PageTransformer {

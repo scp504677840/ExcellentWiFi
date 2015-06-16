@@ -1,6 +1,11 @@
 package com.jzlg.excellentwifi.fragment;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -29,33 +34,34 @@ import com.jzlg.excellentwifi.R;
 import com.jzlg.excellentwifi.Impl.MyOrientationListener;
 import com.jzlg.excellentwifi.Impl.MyOrientationListener.OnOrientationListener;
 import com.jzlg.excellentwifi.entity.WifiInfo;
+import com.jzlg.excellentwifi.utils.HttpUtil;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * WIFI地理位置在百度地图上显示
  * 
- * @author
+ * @author 宋春鹏
  *
  */
-public class MapFragment extends Fragment {
+public class MapFragment extends Fragment implements OnClickListener {
 	private View view;
 	private Context mContext;
 	private MapView mMapView;
 	private BaiduMap mBaiduMap;
+	private ImageButton myLocationBtn;
 
 	// 定位相关
 	private LocationClient mLocationClient;
@@ -72,6 +78,8 @@ public class MapFragment extends Fragment {
 
 	// 覆盖物相关
 	private BitmapDescriptor mMarker;
+	// 网络相关
+	private HttpUtil httpUtil;
 
 	public MapFragment(Context context) {
 		mContext = context;
@@ -150,12 +158,43 @@ public class MapFragment extends Fragment {
 		// 设置地图放大缩小参数
 		MapStatusUpdate msu = MapStatusUpdateFactory.zoomTo(15.0f);
 		mBaiduMap.setMapStatus(msu);
+
+		myLocationBtn = (ImageButton) view
+				.findViewById(R.id.baidumap_myLocation);
+		myLocationBtn.setOnClickListener(this);
 	}
 
 	// 初始化覆盖物
 	private void initMarker() {
 		mMarker = BitmapDescriptorFactory.fromResource(R.drawable.map_marke);
-		addOverlay(WifiInfo.infos);// 添加覆盖物
+		//addOverlay(getMarkerData());// 添加覆盖物
+	}
+
+	// 从服务器上获取覆盖物数据
+	@SuppressWarnings("static-access")
+	private List<WifiInfo> getMarkerData() {
+		List<WifiInfo> wifiInfos = new ArrayList<WifiInfo>();
+		try {
+			SharedPreferences sharedPreferences =mContext.getSharedPreferences("prot", mContext.MODE_PRIVATE);
+			String protNumber = sharedPreferences.getString("protNumber",
+					"10.0.2.2:8080");
+			String json = httpUtil
+					.getHttpData(
+							"http://"+protNumber+"/ExcellentWiFi/wifiAction!wifiAll.action",
+							"POST",null);
+			JSONArray jsonArray = new JSONArray(json);
+			for (int i = 0; i < jsonArray.length(); i++) {
+				JSONObject jsonObject = jsonArray.getJSONObject(i);
+				WifiInfo wifiInfo = new WifiInfo(
+						jsonObject.getString("wifiSsid"),
+						Double.valueOf(jsonObject.getString("wifiX")),
+						Double.valueOf(jsonObject.getString("wifiY")));
+				wifiInfos.add(wifiInfo);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return wifiInfos;
 	}
 
 	// 定位初始化
@@ -247,7 +286,7 @@ public class MapFragment extends Fragment {
 			break;
 		// 覆盖物
 		case R.id.map_add_overlay:
-			addOverlay(WifiInfo.infos);
+			addOverlay(getMarkerData());
 			break;
 
 		default:
@@ -376,6 +415,19 @@ public class MapFragment extends Fragment {
 				isFirstIn = false;
 			}
 
+		}
+	}
+
+	// 点击事件
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.baidumap_myLocation:// 我的位置
+			centerToMyLocation();
+			break;
+
+		default:
+			break;
 		}
 	}
 }

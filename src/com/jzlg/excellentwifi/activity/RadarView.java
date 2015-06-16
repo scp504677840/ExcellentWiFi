@@ -25,7 +25,7 @@ import com.jzlg.excellentwifi.utils.WifiAdmin;
 /**
  * ¿◊¥Ô…®√Ë
  * 
- * @author
+ * @author ÀŒ¥∫≈Ù
  *
  */
 public class RadarView extends BaseView {

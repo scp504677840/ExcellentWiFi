@@ -8,6 +8,7 @@
     <issue id="InflateParams" severity="ignore" />
     <issue id="InlinedApi" severity="ignore" />
     <issue id="NewApi" severity="ignore" />
+    <issue id="SdCardPath" severity="ignore" />
     <issue id="ShowToast" severity="ignore" />
     <issue id="SimpleDateFormat" severity="ignore" />
     <issue id="UseValueOf" severity="ignore" />

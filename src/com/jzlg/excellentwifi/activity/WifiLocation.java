@@ -17,13 +17,12 @@ import android.widget.Toast;
 /**
  * WIFI位置
  * 
- * @author
+ * @author 郭旭
  *
  */
 public class WifiLocation extends Activity {
 	private ActionBar actionBar;
 	private TextView wifiStrength;
-	private ImageView wifiStrengthImg;
 	private Handler refresh;
 	private RefreshC refreshC;
 	private boolean isRefresh = true;// 是否刷新
@@ -44,7 +43,6 @@ public class WifiLocation extends Activity {
 		actionBar.setDisplayHomeAsUpEnabled(true);// 开启导航图标
 		wifi = (WifiManager) getSystemService(WIFI_SERVICE);
 		wifiStrength = (TextView) findViewById(R.id.wifi_location_strength);
-		wifiStrengthImg = (ImageView) findViewById(R.id.wifi_location_strengthimg);
 		refresh = new Refresh();
 		refreshC = new RefreshC();
 		refreshC.start();
@@ -56,18 +54,17 @@ public class WifiLocation extends Activity {
 			String str = (String) msg.obj;
 			int max = Integer.valueOf(str);
 			int abs = Math.abs(max);
-			wifiStrength.setText(abs+"");
-			// wifiStrength.setText("");
+			wifiStrength.setText("您正在远离目标");
 			String yl = "您正在远离目标";
 			String fj = "目标就在附近";
-//			if (min == 0)
-//				min = abs;
-//			if (min > abs)
-//				min = abs;
-//			if (abs - min > 35)
-//				wifiStrength.setText(yl + abs);
-//			if (min <= 35)
-//				wifiStrength.setText(fj + abs);
+			if (min == 0)
+				min = abs;
+			if (min > abs)
+				min = abs;
+			if (abs - min > 35)
+				wifiStrength.setText(yl + abs);
+			if (min <= 35)
+				wifiStrength.setText(fj + abs);
 		}
 
 	}
@@ -106,9 +103,8 @@ public class WifiLocation extends Activity {
 	@Override
 	protected void onStart() {
 		int rssi = wifi.getConnectionInfo().getRssi();
-		if (rssi != -999 || rssi != -9999) {
+		if (rssi != -9999 || rssi != -9999) {
 			isRefresh = true;
-
 		}
 		super.onStart();
 	}

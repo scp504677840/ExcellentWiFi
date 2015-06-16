@@ -23,7 +23,7 @@ import android.widget.Toast;
 /**
  * 主活动
  * 
- * @author 
+ * @author 宋春鹏
  *
  */
 public class MainActivity extends BaseActivity implements OnClickListener {
@@ -82,7 +82,7 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 		mBtnToggleMenu.setOnClickListener(this);
 	}
 
-	// 初始化操作
+	// 初始化控件
 	private void initView() {
 		// 左侧菜单
 		mLeftMenu = (SlidingMenu) findViewById(R.id.main_leftmenu);
