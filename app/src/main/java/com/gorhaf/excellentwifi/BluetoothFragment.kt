@@ -29,6 +29,7 @@ class BluetoothFragment : Fragment() {
     private val bluetoothAdapter: BluetoothAdapter? by lazy { BluetoothAdapter.getDefaultAdapter() }
     private lateinit var deviceListAdapter: ArrayAdapter<String>
     private val discoveredDevices = mutableListOf<String>()
+    private val discoveredDeviceObjects = mutableListOf<BluetoothDevice>()
 
     private val permissionsLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
@@ -52,6 +53,7 @@ class BluetoothFragment : Fragment() {
                 BluetoothAdapter.ACTION_DISCOVERY_STARTED -> {
                     Log.i(TAG, "Bluetooth discovery started.")
                     discoveredDevices.clear()
+                    discoveredDeviceObjects.clear()
                     deviceListAdapter.notifyDataSetChanged()
                     binding.scanButton.text = "Scanning..."
                 }
@@ -78,10 +80,35 @@ class BluetoothFragment : Fragment() {
                         val deviceName = it.name ?: "Unknown Device"
                         val deviceInfo = "$deviceName\n${it.address}\nRSSI: $rssi dBm"
                         Log.d(TAG, "Device found: $deviceInfo")
-                        if (!discoveredDevices.contains(deviceInfo)) {
+                        if (!discoveredDeviceObjects.contains(it)) {
                             discoveredDevices.add(deviceInfo)
+                            discoveredDeviceObjects.add(it)
                             deviceListAdapter.notifyDataSetChanged()
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    private val bondStateReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val action = intent.action
+            if (action == BluetoothDevice.ACTION_BOND_STATE_CHANGED) {
+                val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+                val bondState = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR)
+                when (bondState) {
+                    BluetoothDevice.BOND_BONDED -> {
+                        Log.d(TAG, "Device ${device?.address} bonded.")
+                        Toast.makeText(context, "Paired with ${device?.name ?: device?.address}", Toast.LENGTH_SHORT).show()
+                    }
+                    BluetoothDevice.BOND_BONDING -> {
+                        Log.d(TAG, "Device ${device?.address} bonding.")
+                        Toast.makeText(context, "Pairing with ${device?.name ?: device?.address}...", Toast.LENGTH_SHORT).show()
+                    }
+                    BluetoothDevice.BOND_NONE -> {
+                        Log.d(TAG, "Device ${device?.address} not bonded.")
+                        Toast.makeText(context, "Pairing failed with ${device?.name ?: device?.address}", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -120,6 +147,17 @@ class BluetoothFragment : Fragment() {
         Log.d(TAG, "onViewCreated")
         deviceListAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, discoveredDevices)
         binding.devicesListView.adapter = deviceListAdapter
+        binding.devicesListView.setOnItemClickListener { _, _, position, _ ->
+            val device = discoveredDeviceObjects[position]
+            Log.d(TAG, "Attempting to pair with device: ${device.address}")
+            // BLUETOOTH_CONNECT permission is required for createBond
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                Log.w(TAG, "Cannot create bond without BLUETOOTH_CONNECT permission.")
+                Toast.makeText(requireContext(), "Permission to connect to Bluetooth devices is required.", Toast.LENGTH_SHORT).show()
+                return@setOnItemClickListener
+            }
+            device.createBond()
+        }
 
         binding.scanButton.setOnClickListener {
             Log.d(TAG, "Scan button clicked")
@@ -222,6 +260,10 @@ class BluetoothFragment : Fragment() {
         val stateFilter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
         requireActivity().registerReceiver(bluetoothStateReceiver, stateFilter)
         Log.d(TAG, "Bluetooth state receiver registered")
+
+        val bondFilter = IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
+        requireActivity().registerReceiver(bondStateReceiver, bondFilter)
+        Log.d(TAG, "Bond state receiver registered")
     }
 
     override fun onStop() {
@@ -231,6 +273,8 @@ class BluetoothFragment : Fragment() {
         Log.d(TAG, "Discovery receiver unregistered")
         requireActivity().unregisterReceiver(bluetoothStateReceiver)
         Log.d(TAG, "Bluetooth state receiver unregistered")
+        requireActivity().unregisterReceiver(bondStateReceiver)
+        Log.d(TAG, "Bond state receiver unregistered")
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.BLUETOOTH_SCAN
