@@ -84,6 +84,24 @@ class BluetoothFragment : Fragment() {
         }
     }
 
+    private val bluetoothStateReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val action = intent.action
+            if (action == BluetoothAdapter.ACTION_STATE_CHANGED) {
+                when (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR)) {
+                    BluetoothAdapter.STATE_OFF -> {
+                        Log.d(TAG, "Bluetooth state is OFF")
+                        binding.bluetoothSwitch.isChecked = false
+                    }
+                    BluetoothAdapter.STATE_ON -> {
+                        Log.d(TAG, "Bluetooth state is ON")
+                        binding.bluetoothSwitch.isChecked = true
+                    }
+                }
+            }
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -189,13 +207,17 @@ class BluetoothFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         Log.d(TAG, "onStart")
-        val filter = IntentFilter().apply {
+        val discoveryFilter = IntentFilter().apply {
             addAction(BluetoothDevice.ACTION_FOUND)
             addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED)
             addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
         }
-        requireActivity().registerReceiver(discoveryReceiver, filter)
+        requireActivity().registerReceiver(discoveryReceiver, discoveryFilter)
         Log.d(TAG, "Discovery receiver registered")
+
+        val stateFilter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
+        requireActivity().registerReceiver(bluetoothStateReceiver, stateFilter)
+        Log.d(TAG, "Bluetooth state receiver registered")
     }
 
     override fun onStop() {
@@ -203,6 +225,8 @@ class BluetoothFragment : Fragment() {
         Log.d(TAG, "onStop")
         requireActivity().unregisterReceiver(discoveryReceiver)
         Log.d(TAG, "Discovery receiver unregistered")
+        requireActivity().unregisterReceiver(bluetoothStateReceiver)
+        Log.d(TAG, "Bluetooth state receiver unregistered")
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
                 Manifest.permission.BLUETOOTH_SCAN
