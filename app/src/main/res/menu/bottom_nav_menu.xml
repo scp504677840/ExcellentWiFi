@@ -2,11 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/nav_wifi"
-        android:title="@string/tab_wifi" />
+        android:id="@+id/nav_bluetooth"
+        android:icon="@drawable/ic_bt"
+        android:title="@string/tab_bluetooth" />
 
     <item
-        android:id="@+id/nav_bluetooth"
-        android:title="@string/tab_bluetooth" />
+        android:id="@+id/nav_wifi"
+        android:icon="@drawable/ic_wifi"
+        android:title="@string/tab_wifi" />
 
 </menu>

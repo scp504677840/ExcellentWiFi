@@ -17,13 +17,13 @@ class MainActivity : AppCompatActivity() {
 
         // Load the default fragment
         loadFragment(WifiFragment())
-        binding.bottomNavigation.selectedItemId = R.id.nav_wifi
+        binding.bottomNavigation.selectedItemId = R.id.nav_bluetooth
 
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             val selectedFragment: Fragment = when (item.itemId) {
-                R.id.nav_wifi -> WifiFragment()
                 R.id.nav_bluetooth -> BluetoothFragment()
-                else -> WifiFragment()
+                R.id.nav_wifi -> WifiFragment()
+                else -> BluetoothFragment()
             }
             loadFragment(selectedFragment)
             true
