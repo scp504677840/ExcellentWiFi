@@ -62,14 +62,18 @@ class BluetoothFragment : Fragment() {
                 BluetoothDevice.ACTION_FOUND -> {
                     val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
                     device?.let {
-                        if (ActivityCompat.checkSelfPermission(
-                                requireContext(),
-                                Manifest.permission.BLUETOOTH_CONNECT
-                            ) != PackageManager.PERMISSION_GRANTED
-                        ) {
-                            Log.w(TAG, "BLUETOOTH_CONNECT permission not granted, cannot get device name.")
-                            return
+                        // Starting from Android 12 (API 31), BLUETOOTH_CONNECT is required to get the device name.
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            if (ContextCompat.checkSelfPermission(
+                                    requireContext(),
+                                    Manifest.permission.BLUETOOTH_CONNECT
+                                ) != PackageManager.PERMISSION_GRANTED
+                            ) {
+                                Log.w(TAG, "BLUETOOTH_CONNECT permission not granted on API ${Build.VERSION.SDK_INT}, cannot get device name.")
+                                return
+                            }
                         }
+                        // On older versions, BLUETOOTH permission is sufficient, which is already checked.
                         val rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE)
                         val deviceName = it.name ?: "Unknown Device"
                         val deviceInfo = "$deviceName\n${it.address}\nRSSI: $rssi dBm"
