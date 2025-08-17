@@ -114,7 +114,10 @@ class BluetoothFragment : Fragment() {
                         Toast.makeText(context, "Pairing with ${device?.name ?: device?.address}...", Toast.LENGTH_SHORT).show()
                     }
                     BluetoothDevice.BOND_NONE -> {
-                        val reason = intent.getIntExtra(BluetoothDevice.EXTRA_REASON, BluetoothDevice.ERROR)
+                        val EXTRA_UNBOND_REASON = "android.bluetooth.device.extra.REASON"
+                        val reason = intent.getIntExtra(EXTRA_UNBOND_REASON, BluetoothDevice.ERROR)
+                        // val reason = intent.getIntExtra(BluetoothDevice.EXTRA_UNBOND_REASON, BluetoothDevice.ERROR)
+                        // val reason = intent.getIntExtra(BluetoothDevice.EXTRA_REASON, BluetoothDevice.ERROR)
                         val reasonString = getBondFailureReason(reason)
                         Log.e(TAG, "Device ${device?.address} not bonded. Reason: $reasonString ($reason)")
                         Toast.makeText(context, "Pairing failed: $reasonString", Toast.LENGTH_LONG).show()
@@ -191,13 +194,24 @@ class BluetoothFragment : Fragment() {
 
     private fun getBondFailureReason(reason: Int): String {
         return when (reason) {
-            BluetoothDevice.REASON_AUTH_CANCELED -> "Authentication Canceled"
-            BluetoothDevice.REASON_AUTH_FAILED -> "Authentication Failed"
-            BluetoothDevice.REASON_AUTH_REJECTED -> "Authentication Rejected"
-            BluetoothDevice.REASON_REMOTE_DEVICE_DOWN -> "Remote Device Down"
-            BluetoothDevice.REASON_DISCOVERY_IN_PROGRESS -> "Discovery in Progress"
-            BluetoothDevice.REASON_REMOTE_USER_TERMINATED_CONNECTION -> "Remote User Terminated Connection"
-            BluetoothDevice.REASON_LOCAL_HOST_TERMINATED_CONNECTION -> "Local Host Terminated Connection"
+            // 配对失败，因为 PIN 或密钥不匹配，或者远程设备未及时响应 PIN 请求。
+            UNBOND_REASON_AUTH_FAILED -> "AUTH_FAILED：配对失败，因为 PIN 或密钥不匹配，或者远程设备未及时响应 PIN 请求。"
+            // 配对失败，因为远程设备明确拒绝了配对请求。
+            UNBOND_REASON_AUTH_REJECTED -> "AUTH_REJECTED：配对失败，因为远程设备明确拒绝了配对请求。"
+            // 配对失败，因为本地设备取消了配对过程。
+            UNBOND_REASON_AUTH_CANCELED -> "AUTH_CANCELED：配对失败，因为本地设备取消了配对过程。"
+            // 配对失败，因为远程设备不可用（例如设备断开或关机）。
+            UNBOND_REASON_REMOTE_DEVICE_DOWN -> "REMOTE_DEVICE_DOWN：配对失败，因为远程设备不可用（例如设备断开或关机）。"
+            // 配对失败，因为设备正在进行蓝牙扫描或发现过程。
+            UNBOND_REASON_DISCOVERY_IN_PROGRESS -> "DISCOVERY_IN_PROGRESS：配对失败，因为设备正在进行蓝牙扫描或发现过程。"
+            // 配对失败，因为认证过程超时。
+            UNBOND_REASON_AUTH_TIMEOUT -> "AUTH_TIMEOUT：配对失败，因为认证过程超时。"
+            // 配对失败，因为多次尝试配对导致失败（可能是安全限制）。
+            UNBOND_REASON_REPEATED_ATTEMPTS -> "REPEATED_ATTEMPTS：配对失败，因为多次尝试配对导致失败（可能是安全限制）。"
+            // 配对失败，因为远程设备取消了认证过程。
+            UNBOND_REASON_REMOTE_AUTH_CANCELED -> "REMOTE_AUTH_CANCELED：配对失败，因为远程设备取消了认证过程。"
+            // 配对被显式移除（例如用户手动取消配对）。
+            UNBOND_REASON_REMOVED -> "REMOVED：配对被显式移除（例如用户手动取消配对）。"
             else -> "Unknown Reason ($reason)"
         }
     }
@@ -329,5 +343,56 @@ class BluetoothFragment : Fragment() {
 
     companion object {
         private const val TAG = "BluetoothFragment"
+
+        /**
+         * A bond attempt succeeded
+         */
+        private const val BOND_SUCCESS: Int = 0
+
+        /**
+         * A bond attempt failed because pins did not match, or remote device did not respond to pin
+         * request in time
+         */
+        private const val UNBOND_REASON_AUTH_FAILED: Int = 1
+
+        /**
+         * A bond attempt failed because the other side explicitly rejected bonding
+         */
+        private const val UNBOND_REASON_AUTH_REJECTED: Int = 2
+
+        /**
+         * A bond attempt failed because we canceled the bonding process
+         */
+        private const val UNBOND_REASON_AUTH_CANCELED: Int = 3
+
+        /**
+         * A bond attempt failed because we could not contact the remote device
+         */
+        private const val UNBOND_REASON_REMOTE_DEVICE_DOWN: Int = 4
+
+        /**
+         * A bond attempt failed because a discovery is in progress
+         */
+        private const val UNBOND_REASON_DISCOVERY_IN_PROGRESS: Int = 5
+
+        /**
+         * A bond attempt failed because of authentication timeout
+         */
+        private const val UNBOND_REASON_AUTH_TIMEOUT: Int = 6
+
+        /**
+         * A bond attempt failed because of repeated attempts
+         */
+        private const val UNBOND_REASON_REPEATED_ATTEMPTS: Int = 7
+
+        /**
+         * A bond attempt failed because we received an Authentication Cancel by remote end
+         */
+        private const val UNBOND_REASON_REMOTE_AUTH_CANCELED: Int = 8
+
+        /**
+         * An existing bond was explicitly revoked
+         */
+        private const val UNBOND_REASON_REMOVED: Int = 9
     }
 }
