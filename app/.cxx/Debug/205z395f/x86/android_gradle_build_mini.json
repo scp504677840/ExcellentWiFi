@@ -1,0 +1,27 @@
+{
+  "buildFiles": [
+    "/Users/admin/Workspace/android/ExcellentWiFi/app/src/main/cpp/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/admin/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/admin/Workspace/android/ExcellentWiFi/app/.cxx/Debug/205z395f/x86",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/admin/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/admin/Workspace/android/ExcellentWiFi/app/.cxx/Debug/205z395f/x86",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "excellentwifi::@6890427a1f51a3e7e1df": {
+      "artifactName": "excellentwifi",
+      "abi": "x86",
+      "output": "/Users/admin/Workspace/android/ExcellentWiFi/app/build/intermediates/cxx/Debug/205z395f/obj/x86/libexcellentwifi.so",
+      "runtimeFiles": []
+    }
+  }
+}

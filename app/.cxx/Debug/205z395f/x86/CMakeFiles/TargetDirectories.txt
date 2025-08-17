@@ -1,0 +1,3 @@
+/Users/admin/Workspace/android/ExcellentWiFi/app/.cxx/Debug/205z395f/x86/CMakeFiles/excellentwifi.dir
+/Users/admin/Workspace/android/ExcellentWiFi/app/.cxx/Debug/205z395f/x86/CMakeFiles/edit_cache.dir
+/Users/admin/Workspace/android/ExcellentWiFi/app/.cxx/Debug/205z395f/x86/CMakeFiles/rebuild_cache.dir
