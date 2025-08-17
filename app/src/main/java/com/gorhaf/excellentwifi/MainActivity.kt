@@ -2,7 +2,7 @@ package com.gorhaf.excellentwifi
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.TextView
+import androidx.fragment.app.Fragment
 import com.gorhaf.excellentwifi.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -15,8 +15,25 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Example of a call to a native method
-        binding.sampleText.text = stringFromJNI()
+        // Load the default fragment
+        loadFragment(WifiFragment())
+        binding.bottomNavigation.selectedItemId = R.id.nav_wifi
+
+        binding.bottomNavigation.setOnItemSelectedListener { item ->
+            val selectedFragment: Fragment = when (item.itemId) {
+                R.id.nav_wifi -> WifiFragment()
+                R.id.nav_bluetooth -> BluetoothFragment()
+                else -> WifiFragment()
+            }
+            loadFragment(selectedFragment)
+            true
+        }
+    }
+
+    private fun loadFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .commit()
     }
 
     /**

@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">ExcellentWiFi</string>
+    <string name="tab_wifi">WiFi管理</string>
+    <string name="tab_bluetooth">蓝牙管理</string>
+    <string name="wifi_status">WiFi Status</string>
+    <string name="bluetooth_status">Bluetooth Status</string>
 </resources>
