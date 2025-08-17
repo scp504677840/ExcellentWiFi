@@ -80,11 +80,18 @@ class BluetoothFragment : Fragment() {
                         val deviceName = it.name ?: "Unknown Device"
                         val deviceInfo = "$deviceName\n${it.address}\nRSSI: $rssi dBm"
                         Log.d(TAG, "Device found: $deviceInfo")
-                        if (!discoveredDeviceObjects.contains(it)) {
+                        val existingDeviceIndex = discoveredDeviceObjects.indexOf(it)
+                        if (existingDeviceIndex != -1) {
+                            // Device already exists, update it
+                            Log.d(TAG, "Updating existing device at index $existingDeviceIndex")
+                            discoveredDevices[existingDeviceIndex] = deviceInfo
+                        } else {
+                            // New device, add it
+                            Log.d(TAG, "Adding new device")
                             discoveredDevices.add(deviceInfo)
                             discoveredDeviceObjects.add(it)
-                            deviceListAdapter.notifyDataSetChanged()
                         }
+                        deviceListAdapter.notifyDataSetChanged()
                     }
                 }
             }
