@@ -95,7 +95,7 @@ class WifiFragment : Fragment() {
         val results: List<ScanResult> = wifiManager.scanResults
         wifiNetworks.clear()
         for (result in results) {
-            wifiNetworks.add("${result.SSID} - ${result.level}")
+            wifiNetworks.add("${result.SSID}\nSignal Strength: ${result.level} dBm")
         }
         wifiListAdapter.notifyDataSetChanged()
     }

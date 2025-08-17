@@ -54,8 +54,11 @@ class BluetoothFragment : Fragment() {
                             // Permissions are already checked before starting scan, but this is a safeguard
                             return
                         }
+
+                        val rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE)
                         val deviceName = it.name ?: "Unknown Device"
-                        val deviceInfo = "$deviceName\n${it.address}"
+                        val deviceInfo = "$deviceName\n${it.address}\nRSSI: $rssi dBm"
+                      
                         if (!discoveredDevices.contains(deviceInfo)) {
                             discoveredDevices.add(deviceInfo)
                             deviceListAdapter.notifyDataSetChanged()
