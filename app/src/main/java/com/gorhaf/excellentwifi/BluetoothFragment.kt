@@ -148,15 +148,28 @@ class BluetoothFragment : Fragment() {
         deviceListAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, discoveredDevices)
         binding.devicesListView.adapter = deviceListAdapter
         binding.devicesListView.setOnItemClickListener { _, _, position, _ ->
+            Log.d(TAG, "Device list item clicked at position $position")
+            // Cancel discovery because it's resource-intensive and can interfere with pairing.
+            if (bluetoothAdapter?.isDiscovering == true) {
+                Log.d(TAG, "Cancelling discovery to initiate pairing.")
+                bluetoothAdapter?.cancelDiscovery()
+            }
+
             val device = discoveredDeviceObjects[position]
             Log.d(TAG, "Attempting to pair with device: ${device.address}")
+
             // BLUETOOTH_CONNECT permission is required for createBond
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                 Log.w(TAG, "Cannot create bond without BLUETOOTH_CONNECT permission.")
                 Toast.makeText(requireContext(), "Permission to connect to Bluetooth devices is required.", Toast.LENGTH_SHORT).show()
                 return@setOnItemClickListener
             }
-            device.createBond()
+
+            val bondInitiated = device.createBond()
+            if (!bondInitiated) {
+                Log.e(TAG, "Failed to initiate pairing with ${device.address}")
+                Toast.makeText(requireContext(), "Failed to start pairing.", Toast.LENGTH_SHORT).show()
+            }
         }
 
         binding.scanButton.setOnClickListener {
