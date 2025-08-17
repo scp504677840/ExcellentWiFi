@@ -49,6 +49,16 @@ class BluetoothFragment : Fragment() {
             val action = intent.action
             Log.d(TAG, "discoveryReceiver onReceive: $action")
             when (action) {
+                BluetoothAdapter.ACTION_DISCOVERY_STARTED -> {
+                    Log.i(TAG, "Bluetooth discovery started.")
+                    discoveredDevices.clear()
+                    deviceListAdapter.notifyDataSetChanged()
+                    binding.scanButton.text = "Scanning..."
+                }
+                BluetoothAdapter.ACTION_DISCOVERY_FINISHED -> {
+                    Log.i(TAG, "Bluetooth discovery finished.")
+                    binding.scanButton.text = "Scan for Devices"
+                }
                 BluetoothDevice.ACTION_FOUND -> {
                     val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
                     device?.let {
@@ -137,11 +147,16 @@ class BluetoothFragment : Fragment() {
             Log.d(TAG, "Already discovering, cancelling previous discovery")
             bluetoothAdapter?.cancelDiscovery()
         }
-        discoveredDevices.clear()
-        deviceListAdapter.notifyDataSetChanged()
-        bluetoothAdapter?.startDiscovery()
-        Log.i(TAG, "Bluetooth discovery started")
-        Toast.makeText(requireContext(), "Scanning for devices...", Toast.LENGTH_SHORT).show()
+
+        // Start discovery. The BroadcastReceiver will handle clearing the list and UI updates.
+        val discoveryStarted = bluetoothAdapter?.startDiscovery()
+        if (discoveryStarted == true) {
+            Log.i(TAG, "Bluetooth discovery initiated successfully.")
+            Toast.makeText(requireContext(), "Scanning for devices...", Toast.LENGTH_SHORT).show()
+        } else {
+            Log.e(TAG, "Failed to initiate Bluetooth discovery.")
+            Toast.makeText(requireContext(), "Failed to start scan.", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun checkPermissionAndSetSwitch() {
@@ -174,7 +189,11 @@ class BluetoothFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         Log.d(TAG, "onStart")
-        val filter = IntentFilter(BluetoothDevice.ACTION_FOUND)
+        val filter = IntentFilter().apply {
+            addAction(BluetoothDevice.ACTION_FOUND)
+            addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED)
+            addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
+        }
         requireActivity().registerReceiver(discoveryReceiver, filter)
         Log.d(TAG, "Discovery receiver registered")
     }
