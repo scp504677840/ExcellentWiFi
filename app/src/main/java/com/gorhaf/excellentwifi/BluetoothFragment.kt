@@ -107,8 +107,10 @@ class BluetoothFragment : Fragment() {
                         Toast.makeText(context, "Pairing with ${device?.name ?: device?.address}...", Toast.LENGTH_SHORT).show()
                     }
                     BluetoothDevice.BOND_NONE -> {
-                        Log.d(TAG, "Device ${device?.address} not bonded.")
-                        Toast.makeText(context, "Pairing failed with ${device?.name ?: device?.address}", Toast.LENGTH_SHORT).show()
+                        val reason = intent.getIntExtra(BluetoothDevice.EXTRA_REASON, BluetoothDevice.ERROR)
+                        val reasonString = getBondFailureReason(reason)
+                        Log.e(TAG, "Device ${device?.address} not bonded. Reason: $reasonString ($reason)")
+                        Toast.makeText(context, "Pairing failed: $reasonString", Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -178,6 +180,19 @@ class BluetoothFragment : Fragment() {
         }
 
         checkPermissionAndSetSwitch()
+    }
+
+    private fun getBondFailureReason(reason: Int): String {
+        return when (reason) {
+            BluetoothDevice.REASON_AUTH_CANCELED -> "Authentication Canceled"
+            BluetoothDevice.REASON_AUTH_FAILED -> "Authentication Failed"
+            BluetoothDevice.REASON_AUTH_REJECTED -> "Authentication Rejected"
+            BluetoothDevice.REASON_REMOTE_DEVICE_DOWN -> "Remote Device Down"
+            BluetoothDevice.REASON_DISCOVERY_IN_PROGRESS -> "Discovery in Progress"
+            BluetoothDevice.REASON_REMOTE_USER_TERMINATED_CONNECTION -> "Remote User Terminated Connection"
+            BluetoothDevice.REASON_LOCAL_HOST_TERMINATED_CONNECTION -> "Local Host Terminated Connection"
+            else -> "Unknown Reason ($reason)"
+        }
     }
 
     private fun checkPermissionsAndScan() {
