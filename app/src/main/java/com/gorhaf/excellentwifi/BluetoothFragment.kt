@@ -103,7 +103,9 @@ class BluetoothFragment : Fragment() {
             val action = intent.action
             if (action == BluetoothDevice.ACTION_BOND_STATE_CHANGED) {
                 val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
-                val bondState = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.ERROR)
+                val bondState = intent.getIntExtra(BluetoothDevice.EXTRA_BOND_STATE, BluetoothDevice.BOND_NONE)
+                val prevState = intent.getIntExtra(BluetoothDevice.EXTRA_PREVIOUS_BOND_STATE, BluetoothDevice.BOND_NONE)
+                Log.d(TAG, "Prev Device=$prevState")
                 when (bondState) {
                     BluetoothDevice.BOND_BONDED -> {
                         Log.d(TAG, "Device ${device?.address} bonded.")
@@ -115,7 +117,7 @@ class BluetoothFragment : Fragment() {
                     }
                     BluetoothDevice.BOND_NONE -> {
                         val EXTRA_UNBOND_REASON = "android.bluetooth.device.extra.REASON"
-                        val reason = intent.getIntExtra(EXTRA_UNBOND_REASON, BluetoothDevice.ERROR)
+                        val reason = intent.getIntExtra(EXTRA_UNBOND_REASON, BluetoothDevice.BOND_NONE)
                         // val reason = intent.getIntExtra(BluetoothDevice.EXTRA_UNBOND_REASON, BluetoothDevice.ERROR)
                         // val reason = intent.getIntExtra(BluetoothDevice.EXTRA_REASON, BluetoothDevice.ERROR)
                         val reasonString = getBondFailureReason(reason)
