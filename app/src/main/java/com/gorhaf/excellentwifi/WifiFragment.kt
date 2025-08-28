@@ -1,6 +1,7 @@
 package com.gorhaf.excellentwifi
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -109,6 +110,7 @@ class WifiFragment : Fragment() {
         Toast.makeText(requireContext(), "Scanning for WiFi networks...", Toast.LENGTH_SHORT).show()
     }
 
+    @SuppressLint("MissingPermission")
     private fun scanSuccess() {
         Log.d(TAG, "scanSuccess")
         val results: List<ScanResult> = wifiManager.scanResults

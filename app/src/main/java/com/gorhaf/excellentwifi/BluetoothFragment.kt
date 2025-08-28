@@ -1,6 +1,7 @@
 package com.gorhaf.excellentwifi
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.BroadcastReceiver
@@ -99,6 +100,7 @@ class BluetoothFragment : Fragment() {
     }
 
     private val bondStateReceiver = object : BroadcastReceiver() {
+        @SuppressLint("MissingPermission")
         override fun onReceive(context: Context, intent: Intent) {
             val action = intent.action
             if (action == BluetoothDevice.ACTION_BOND_STATE_CHANGED) {
@@ -156,6 +158,7 @@ class BluetoothFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d(TAG, "onViewCreated")
