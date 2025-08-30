@@ -13,21 +13,17 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
-import com.gorhaf.excellentwifi.databinding.FragmentBluetoothBinding
+import com.gorhaf.excellentwifi.databinding.ActivityBluetoothBinding
 
-class BluetoothFragment : Fragment() {
+class BluetoothActivity : AppCompatActivity() {
 
-    private var _binding: FragmentBluetoothBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: ActivityBluetoothBinding
     private val bluetoothAdapter: BluetoothAdapter? by lazy { BluetoothAdapter.getDefaultAdapter() }
     private lateinit var deviceListAdapter: ArrayAdapter<String>
     private val discoveredDevices = mutableListOf<String>()
@@ -43,7 +39,7 @@ class BluetoothFragment : Fragment() {
                 startScan()
             } else {
                 Log.d(TAG, "Some or all permissions denied")
-                Toast.makeText(requireContext(), "Permissions are required for Bluetooth functionality.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Permissions are required for Bluetooth functionality.", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -69,7 +65,7 @@ class BluetoothFragment : Fragment() {
                         // Starting from Android 12 (API 31), BLUETOOTH_CONNECT is required to get the device name.
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                             if (ContextCompat.checkSelfPermission(
-                                    requireContext(),
+                                    this@BluetoothActivity,
                                     Manifest.permission.BLUETOOTH_CONNECT
                                 ) != PackageManager.PERMISSION_GRANTED
                             ) {
@@ -150,21 +146,15 @@ class BluetoothFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        Log.d(TAG, "onCreateView")
-        _binding = FragmentBluetoothBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
     @SuppressLint("MissingPermission")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        Log.d(TAG, "onViewCreated")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate")
+        binding = ActivityBluetoothBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         deviceListAdapter =
-            ArrayAdapter(requireContext(), R.layout.simple_list_item_1, discoveredDevices)
+            ArrayAdapter(this, R.layout.simple_list_item_1, discoveredDevices)
         binding.devicesListView.adapter = deviceListAdapter
         binding.devicesListView.setOnItemClickListener { _, _, position, _ ->
             Log.d(TAG, "Device list item clicked at position $position")
@@ -178,16 +168,16 @@ class BluetoothFragment : Fragment() {
             Log.d(TAG, "Attempting to pair with device: ${device.address}")
 
             // BLUETOOTH_CONNECT permission is required for createBond
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                 Log.w(TAG, "Cannot create bond without BLUETOOTH_CONNECT permission.")
-                Toast.makeText(requireContext(), "Permission to connect to Bluetooth devices is required.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Permission to connect to Bluetooth devices is required.", Toast.LENGTH_SHORT).show()
                 return@setOnItemClickListener
             }
 
             val bondInitiated = device.createBond()
             if (!bondInitiated) {
                 Log.e(TAG, "Failed to initiate pairing with ${device.address}")
-                Toast.makeText(requireContext(), "Failed to start pairing.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Failed to start pairing.", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -237,7 +227,7 @@ class BluetoothFragment : Fragment() {
         Log.d(TAG, "Required permissions: $requiredPermissions")
 
         val permissionsToRequest = requiredPermissions.filter {
-            ContextCompat.checkSelfPermission(requireContext(), it) != PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
         }
 
         if (permissionsToRequest.isEmpty()) {
@@ -252,7 +242,7 @@ class BluetoothFragment : Fragment() {
     private fun startScan() {
         Log.d(TAG, "startScan")
         if (ActivityCompat.checkSelfPermission(
-                requireContext(),
+                this,
                 Manifest.permission.BLUETOOTH_SCAN
             ) != PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
         ) {
@@ -268,17 +258,17 @@ class BluetoothFragment : Fragment() {
         val discoveryStarted = bluetoothAdapter?.startDiscovery()
         if (discoveryStarted == true) {
             Log.i(TAG, "Bluetooth discovery initiated successfully.")
-            Toast.makeText(requireContext(), "Scanning for devices...", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Scanning for devices...", Toast.LENGTH_SHORT).show()
         } else {
             Log.e(TAG, "Failed to initiate Bluetooth discovery.")
-            Toast.makeText(requireContext(), "Failed to start scan.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Failed to start scan.", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun checkPermissionAndSetSwitch() {
         Log.d(TAG, "checkPermissionAndSetSwitch")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                 Log.d(TAG, "Requesting BLUETOOTH_CONNECT for switch state")
                 permissionsLauncher.launch(arrayOf(Manifest.permission.BLUETOOTH_CONNECT))
             } else {
@@ -292,7 +282,7 @@ class BluetoothFragment : Fragment() {
     private fun updateBluetoothSwitch() {
         Log.d(TAG, "updateBluetoothSwitch")
         try {
-            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED || Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) == PackageManager.PERMISSION_GRANTED || Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
                 val isEnabled = bluetoothAdapter?.isEnabled == true
                 binding.bluetoothSwitch.isChecked = isEnabled
                 Log.d(TAG, "Bluetooth switch updated to: $isEnabled")
@@ -310,29 +300,29 @@ class BluetoothFragment : Fragment() {
             addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED)
             addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)
         }
-        requireActivity().registerReceiver(discoveryReceiver, discoveryFilter)
+        registerReceiver(discoveryReceiver, discoveryFilter)
         Log.d(TAG, "Discovery receiver registered")
 
         val stateFilter = IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED)
-        requireActivity().registerReceiver(bluetoothStateReceiver, stateFilter)
+        registerReceiver(bluetoothStateReceiver, stateFilter)
         Log.d(TAG, "Bluetooth state receiver registered")
 
         val bondFilter = IntentFilter(BluetoothDevice.ACTION_BOND_STATE_CHANGED)
-        requireActivity().registerReceiver(bondStateReceiver, bondFilter)
+        registerReceiver(bondStateReceiver, bondFilter)
         Log.d(TAG, "Bond state receiver registered")
     }
 
     override fun onStop() {
         super.onStop()
         Log.d(TAG, "onStop")
-        requireActivity().unregisterReceiver(discoveryReceiver)
+        unregisterReceiver(discoveryReceiver)
         Log.d(TAG, "Discovery receiver unregistered")
-        requireActivity().unregisterReceiver(bluetoothStateReceiver)
+        unregisterReceiver(bluetoothStateReceiver)
         Log.d(TAG, "Bluetooth state receiver unregistered")
-        requireActivity().unregisterReceiver(bondStateReceiver)
+        unregisterReceiver(bondStateReceiver)
         Log.d(TAG, "Bond state receiver unregistered")
         if (ActivityCompat.checkSelfPermission(
-                requireContext(),
+                this,
                 Manifest.permission.BLUETOOTH_SCAN
             ) != PackageManager.PERMISSION_GRANTED && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
         ) {
@@ -342,14 +332,8 @@ class BluetoothFragment : Fragment() {
         Log.d(TAG, "Bluetooth discovery cancelled")
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        Log.d(TAG, "onDestroyView")
-        _binding = null
-    }
-
     companion object {
-        private const val TAG = "BluetoothFragment"
+        private const val TAG = "BluetoothActivity"
 
         /**
          * A bond attempt succeeded
