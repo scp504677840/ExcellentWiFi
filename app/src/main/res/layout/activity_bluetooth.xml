@@ -21,8 +21,8 @@
         android:layout_marginTop="16dp"
         android:text="Scan for Devices" />
 
-    <ListView
-        android:id="@+id/devices_list_view"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/devices_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/scan_button"
