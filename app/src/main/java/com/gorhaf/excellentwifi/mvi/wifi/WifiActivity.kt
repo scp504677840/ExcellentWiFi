@@ -3,13 +3,13 @@ package com.gorhaf.excellentwifi.mvi.wifi
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.gorhaf.excellentwifi.databinding.ActivityWifiBinding
 import kotlinx.coroutines.launch
 
@@ -17,7 +17,7 @@ class WifiActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityWifiBinding
     private val viewModel: WifiViewModel by viewModels()
-    private lateinit var wifiListAdapter: ArrayAdapter<String>
+    private lateinit var wifiNetworkAdapter: WifiNetworkAdapter
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -33,7 +33,7 @@ class WifiActivity : AppCompatActivity() {
         binding = ActivityWifiBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupWifiList()
+        setupRecyclerView()
 
         binding.scanButtonWifi.setOnClickListener {
             checkPermissionAndScan()
@@ -42,18 +42,19 @@ class WifiActivity : AppCompatActivity() {
         observeViewModel()
     }
 
-    private fun setupWifiList() {
-        wifiListAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, mutableListOf())
-        binding.wifiListView.adapter = wifiListAdapter
+    private fun setupRecyclerView() {
+        wifiNetworkAdapter = WifiNetworkAdapter(emptyList())
+        binding.wifiRecyclerView.apply {
+            adapter = wifiNetworkAdapter
+            layoutManager = LinearLayoutManager(this@WifiActivity)
+        }
     }
 
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.uiState.collect { state ->
                 state.wifiNetworks.collect { networks ->
-                    wifiListAdapter.clear()
-                    wifiListAdapter.addAll(networks)
-                    wifiListAdapter.notifyDataSetChanged()
+                    wifiNetworkAdapter.updateData(networks)
                 }
 
                 binding.wifiSwitch.isChecked = state.isWifiEnabled.value
