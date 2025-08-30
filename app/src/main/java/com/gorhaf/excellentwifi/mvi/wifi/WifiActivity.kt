@@ -12,20 +12,16 @@ import android.net.wifi.ScanResult
 import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
-import com.gorhaf.excellentwifi.databinding.FragmentWifiBinding
+import com.gorhaf.excellentwifi.databinding.ActivityWifiBinding
 
-class WifiFragment : Fragment() {
+class WifiActivity : AppCompatActivity() {
 
-    private var _binding: FragmentWifiBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: ActivityWifiBinding
     private lateinit var wifiManager: WifiManager
     private lateinit var wifiListAdapter: ArrayAdapter<String>
     private val wifiNetworks = mutableListOf<String>()
@@ -38,7 +34,7 @@ class WifiFragment : Fragment() {
                 startWifiScan()
             } else {
                 Log.d(TAG, "ACCESS_FINE_LOCATION permission denied")
-                Toast.makeText(requireContext(), "Location permission is required for WiFi scanning.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Location permission is required for WiFi scanning.", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -57,23 +53,17 @@ class WifiFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        Log.d(TAG, "onCreateView")
-        _binding = FragmentWifiBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate")
+        binding = ActivityWifiBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        Log.d(TAG, "onViewCreated")
-        wifiManager = requireContext().applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        wifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
         binding.wifiSwitch.isChecked = wifiManager.isWifiEnabled
         Log.d(TAG, "WiFi switch state: ${wifiManager.isWifiEnabled}")
 
-        wifiListAdapter = ArrayAdapter(requireContext(), R.layout.simple_list_item_1, wifiNetworks)
+        wifiListAdapter = ArrayAdapter(this, R.layout.simple_list_item_1, wifiNetworks)
         binding.wifiListView.adapter = wifiListAdapter
 
         binding.scanButtonWifi.setOnClickListener {
@@ -82,13 +72,13 @@ class WifiFragment : Fragment() {
         }
 
         val intentFilter = IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
-        requireContext().registerReceiver(wifiScanReceiver, intentFilter)
+        registerReceiver(wifiScanReceiver, intentFilter)
         Log.d(TAG, "WiFi scan receiver registered")
     }
 
     private fun checkPermissionAndScan() {
         Log.d(TAG, "checkPermissionAndScan")
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "ACCESS_FINE_LOCATION permission already granted")
             startWifiScan()
         } else {
@@ -108,7 +98,7 @@ class WifiFragment : Fragment() {
         } else {
             Log.i(TAG, "WiFi scan initiated")
         }
-        Toast.makeText(requireContext(), "Scanning for WiFi networks...", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Scanning for WiFi networks...", Toast.LENGTH_SHORT).show()
     }
 
     @SuppressLint("MissingPermission")
@@ -127,18 +117,17 @@ class WifiFragment : Fragment() {
 
     private fun scanFailure() {
         Log.e(TAG, "scanFailure")
-        Toast.makeText(requireContext(), "WiFi scan failed.", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "WiFi scan failed.", Toast.LENGTH_SHORT).show()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        Log.d(TAG, "onDestroyView")
-        requireContext().unregisterReceiver(wifiScanReceiver)
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d(TAG, "onDestroy")
+        unregisterReceiver(wifiScanReceiver)
         Log.d(TAG, "WiFi scan receiver unregistered")
-        _binding = null
     }
 
     companion object {
-        private const val TAG = "WifiFragment"
+        private const val TAG = "WifiActivity"
     }
 }
