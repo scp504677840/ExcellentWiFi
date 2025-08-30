@@ -1,4 +1,4 @@
-package com.gorhaf.excellentwifi.mvi
+package com.gorhaf.excellentwifi.mvi.bt
 
 import android.Manifest
 import android.R
@@ -23,7 +23,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.gorhaf.excellentwifi.databinding.FragmentBluetoothBinding
-import com.gorhaf.excellentwifi.mvi.video.VideoActivity
 
 class BluetoothFragment : Fragment() {
 
@@ -194,8 +193,7 @@ class BluetoothFragment : Fragment() {
 
         binding.scanButton.setOnClickListener {
             Log.d(TAG, "Scan button clicked")
-            // checkPermissionsAndScan()
-            VideoActivity.startActivity(context!!)
+            checkPermissionsAndScan()
         }
 
         checkPermissionAndSetSwitch()

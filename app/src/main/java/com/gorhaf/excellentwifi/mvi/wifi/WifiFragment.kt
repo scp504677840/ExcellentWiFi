@@ -1,4 +1,4 @@
-package com.gorhaf.excellentwifi.mvi
+package com.gorhaf.excellentwifi.mvi.wifi
 
 import android.Manifest
 import android.R
