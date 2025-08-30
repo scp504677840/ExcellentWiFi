@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        findViewById<Button>(R.id.go_to_bluetooth_btn).setOnClickListener {
+        findViewById<Button>(R.id.main_go_to_bluetooth_btn).setOnClickListener {
             startActivity(Intent(this, BluetoothActivity::class.java))
         }
     }
