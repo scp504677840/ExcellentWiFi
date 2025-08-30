@@ -26,8 +26,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <ListView
-        android:id="@+id/wifi_list_view"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/wifi_recycler_view"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
