@@ -10,6 +10,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.gorhaf.excellentwifi.R
 import com.gorhaf.excellentwifi.mvi.bt.BluetoothActivity
+import com.gorhaf.excellentwifi.mvi.wifi.WifiActivity
 
 class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
@@ -44,12 +45,16 @@ class MainActivity : AppCompatActivity() {
     private fun initView() {
         Log.d(TAG, "initView")
         uiState.goToBluetoothBtn = findViewById(R.id.main_go_to_bluetooth_btn)
+        uiState.goToWifiBtn = findViewById(R.id.main_go_to_wifi_btn)
     }
 
     private fun initEvent() {
         Log.d(TAG, "initEvent")
         uiState.goToBluetoothBtn!!.setOnClickListener {
             startActivity(Intent(this, BluetoothActivity::class.java))
+        }
+        uiState.goToWifiBtn!!.setOnClickListener {
+            startActivity(Intent(this, WifiActivity::class.java))
         }
     }
 

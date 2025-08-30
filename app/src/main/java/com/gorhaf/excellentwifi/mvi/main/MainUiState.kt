@@ -4,4 +4,5 @@ import android.widget.Button
 
 data class MainUiState(
     var goToBluetoothBtn: Button? = null,
+    var goToWifiBtn: Button? = null,
 )
