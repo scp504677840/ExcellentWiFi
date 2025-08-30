@@ -1,12 +1,15 @@
 package com.gorhaf.excellentwifi.mvi.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.gorhaf.excellentwifi.R
+import com.gorhaf.excellentwifi.mvi.bt.BluetoothActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,6 +22,10 @@ class MainActivity : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+
+        findViewById<Button>(R.id.go_to_bluetooth_btn).setOnClickListener {
+            startActivity(Intent(this, BluetoothActivity::class.java))
         }
     }
 

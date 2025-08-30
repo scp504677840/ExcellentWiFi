@@ -39,6 +39,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".mvi.bt.BluetoothActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
