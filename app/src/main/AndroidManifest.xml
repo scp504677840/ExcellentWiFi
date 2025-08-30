@@ -1,29 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
     <!-- Permissions for WiFi -->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
-
-
-    <!-- Permissions for Bluetooth -->
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" /> <!-- Permissions for Bluetooth -->
     <!-- Request legacy Bluetooth permissions on older devices. -->
-    <uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" android:maxSdkVersion="30" />
-    <!-- Needed for Bluetooth scanning on API 31+ -->
-    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
-    <!-- Needed for connecting to paired Bluetooth devices on API 31+ -->
-    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
-
-
-    <!-- Common permission for both WiFi and Bluetooth scanning -->
+    <uses-permission
+        android:name="android.permission.BLUETOOTH"
+        android:maxSdkVersion="30" />
+    <uses-permission
+        android:name="android.permission.BLUETOOTH_ADMIN"
+        android:maxSdkVersion="30" /> <!-- Needed for Bluetooth scanning on API 31+ -->
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" /> <!-- Needed for connecting to paired Bluetooth devices on API 31+ -->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" /> <!-- Common permission for both WiFi and Bluetooth scanning -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-
     <application
+        android:name=".mvi.App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -33,7 +28,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ExcellentWiFi">
         <activity
-            android:name=".MainActivity"
+            android:name=".mvi.video.VideoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".mvi.main.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

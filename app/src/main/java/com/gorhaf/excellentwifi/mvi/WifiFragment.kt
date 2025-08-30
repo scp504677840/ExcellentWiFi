@@ -1,6 +1,7 @@
-package com.gorhaf.excellentwifi
+package com.gorhaf.excellentwifi.mvi
 
 import android.Manifest
+import android.R
 import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -72,7 +73,7 @@ class WifiFragment : Fragment() {
         binding.wifiSwitch.isChecked = wifiManager.isWifiEnabled
         Log.d(TAG, "WiFi switch state: ${wifiManager.isWifiEnabled}")
 
-        wifiListAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, wifiNetworks)
+        wifiListAdapter = ArrayAdapter(requireContext(), R.layout.simple_list_item_1, wifiNetworks)
         binding.wifiListView.adapter = wifiListAdapter
 
         binding.scanButtonWifi.setOnClickListener {

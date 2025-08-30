@@ -1,10 +1,13 @@
-package com.gorhaf.excellentwifi
+package com.gorhaf.excellentwifi.mvi.main
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import com.gorhaf.excellentwifi.R
 import com.gorhaf.excellentwifi.databinding.ActivityMainBinding
+import com.gorhaf.excellentwifi.mvi.BluetoothFragment
+import com.gorhaf.excellentwifi.mvi.WifiFragment
 
 class MainActivity : AppCompatActivity() {
 

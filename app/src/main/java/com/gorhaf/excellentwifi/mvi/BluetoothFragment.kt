@@ -1,6 +1,7 @@
-package com.gorhaf.excellentwifi
+package com.gorhaf.excellentwifi.mvi
 
 import android.Manifest
+import android.R
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -22,6 +23,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.gorhaf.excellentwifi.databinding.FragmentBluetoothBinding
+import com.gorhaf.excellentwifi.mvi.video.VideoActivity
 
 class BluetoothFragment : Fragment() {
 
@@ -162,7 +164,8 @@ class BluetoothFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d(TAG, "onViewCreated")
-        deviceListAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, discoveredDevices)
+        deviceListAdapter =
+            ArrayAdapter(requireContext(), R.layout.simple_list_item_1, discoveredDevices)
         binding.devicesListView.adapter = deviceListAdapter
         binding.devicesListView.setOnItemClickListener { _, _, position, _ ->
             Log.d(TAG, "Device list item clicked at position $position")
@@ -191,7 +194,8 @@ class BluetoothFragment : Fragment() {
 
         binding.scanButton.setOnClickListener {
             Log.d(TAG, "Scan button clicked")
-            checkPermissionsAndScan()
+            // checkPermissionsAndScan()
+            VideoActivity.startActivity(context!!)
         }
 
         checkPermissionAndSetSwitch()
