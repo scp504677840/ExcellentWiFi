@@ -112,7 +112,7 @@ class BluetoothViewModel(application: Application) : AndroidViewModel(applicatio
     fun startScan() {
         viewModelScope.launch {
             if (bluetoothAdapter?.isDiscovering == true) {
-                bluetoothAdapter.cancelDiscovery()
+                bluetoothAdapter!!.cancelDiscovery()
             }
             bluetoothAdapter?.startDiscovery()
         }

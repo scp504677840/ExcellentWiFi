@@ -3,8 +3,8 @@ package com.gorhaf.excellentwifi.mvi.main
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -12,6 +12,8 @@ import com.gorhaf.excellentwifi.R
 import com.gorhaf.excellentwifi.mvi.bt.BluetoothActivity
 
 class MainActivity : AppCompatActivity() {
+    private val viewModel: MainViewModel by viewModels()
+    private lateinit var uiState: MainUiState
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,10 +25,9 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-
-        findViewById<Button>(R.id.main_go_to_bluetooth_btn).setOnClickListener {
-            startActivity(Intent(this, BluetoothActivity::class.java))
-        }
+        initData()
+        initView()
+        initEvent()
     }
 
     /**
@@ -35,8 +36,26 @@ class MainActivity : AppCompatActivity() {
      */
     external fun stringFromJNI(): String
 
+    private fun initData() {
+        Log.d(TAG, "initData")
+        uiState = viewModel.uiState
+    }
+
+    private fun initView() {
+        Log.d(TAG, "initView")
+        uiState.goToBluetoothBtn = findViewById(R.id.main_go_to_bluetooth_btn)
+    }
+
+    private fun initEvent() {
+        Log.d(TAG, "initEvent")
+        uiState.goToBluetoothBtn!!.setOnClickListener {
+            startActivity(Intent(this, BluetoothActivity::class.java))
+        }
+    }
+
     companion object {
         private const val TAG = "MainActivity"
+
         // Used to load the 'excellentwifi' library on application startup.
         init {
             System.loadLibrary("excellentwifi")
