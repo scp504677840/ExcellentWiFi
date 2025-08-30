@@ -1,19 +1,17 @@
 package com.gorhaf.excellentwifi.mvi.bt
 
 import android.Manifest
-import android.R
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.gorhaf.excellentwifi.databinding.ActivityBluetoothBinding
 import kotlinx.coroutines.launch
 
@@ -21,7 +19,7 @@ class BluetoothActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityBluetoothBinding
     private val viewModel: BluetoothViewModel by viewModels()
-    private lateinit var deviceListAdapter: ArrayAdapter<String>
+    private lateinit var deviceListAdapter: BluetoothDeviceAdapter
 
     private val permissionsLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
@@ -39,13 +37,7 @@ class BluetoothActivity : AppCompatActivity() {
         binding = ActivityBluetoothBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        deviceListAdapter = ArrayAdapter(this, R.layout.simple_list_item_1, mutableListOf())
-        binding.devicesListView.adapter = deviceListAdapter
-
-        binding.devicesListView.setOnItemClickListener { _, _, position, _ ->
-            val device = viewModel.uiState.value.discoveredDeviceObjects[position]
-            viewModel.pairDevice(device)
-        }
+        setupRecyclerView()
 
         binding.scanButton.setOnClickListener {
             checkPermissionsAndScan()
@@ -54,13 +46,23 @@ class BluetoothActivity : AppCompatActivity() {
         observeViewModel()
     }
 
+    private fun setupRecyclerView() {
+        deviceListAdapter = BluetoothDeviceAdapter(emptyList()) { position ->
+            val device = viewModel.uiState.value.discoveredDeviceObjects[position]
+            viewModel.pairDevice(device)
+        }
+        binding.devicesRecyclerView.apply {
+            adapter = deviceListAdapter
+            layoutManager = LinearLayoutManager(this@BluetoothActivity)
+        }
+    }
+
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.uiState.collect { state ->
-                deviceListAdapter.clear()
-                deviceListAdapter.addAll(state.discoveredDevices.value)
-                deviceListAdapter.notifyDataSetChanged()
-
+                state.discoveredDevices.collect { devices ->
+                    deviceListAdapter.updateData(devices)
+                }
                 binding.bluetoothSwitch.isChecked = state.isBluetoothEnabled.value
                 binding.scanButton.text = if (state.isScanning.value) "Scanning..." else "Scan for Devices"
             }
